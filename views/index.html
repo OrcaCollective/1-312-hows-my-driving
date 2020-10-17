@@ -1,0 +1,74 @@
+<!-- This is a static file -->
+<!-- served from your routes in server.js -->
+
+<!-- You might want to try something fancier: -->
+<!-- html/nunjucks docs: http://mozilla.github.io/nunjucks/ -->
+<!-- jade: http://jade-lang.com/ -->
+<!-- haml: http://haml.info/tutorial.html -->
+<!-- hbs(handlebars): http://handlebarsjs.com/expressions.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>1-312-Hows-My-Driving</title>
+    <meta name="description" content="A cool thing made with Glitch">
+    <link id="favicon" rel="icon" href="https://gomix.com/favicon-app.ico" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+<header>
+    <h1>
+        1-312-Hows-My-Driving
+    </h1>
+</header>
+
+<main>
+    <p class="bold">Seattle Public Vehicle Lookup</p>
+    <p>Enter in a license plate</p>
+    <form>
+        <input type="text" maxlength="100" placeholder="License #">
+        <button type="submit">Submit</button>
+    </form>
+    <section class="dreams">
+        <div id="license">
+
+        </div>
+    </section>
+</main>
+
+<footer>
+    <a href="https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb"><b>View the source data</b></a>
+    <br/>
+    <br/>
+    <a href="http://twitter.com/AetherUnbound">If I break message my mom</a>
+</footer>
+
+
+<!-- Your web-app is https, so your scripts need to be too -->
+<script src="https://code.jquery.com/jquery-2.2.1.min.js"
+        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+        crossorigin="anonymous"></script>
+<script>
+      $(function() {
+        console.log('hello world :o');
+
+
+        $('form').submit(function(event) {
+          event.preventDefault();
+          var license = $('input').val();
+          $.post('/lookup?' + $.param({'license': license}), function(data) {
+            console.log('Data: ' + data);
+            $('#license').html(data);
+            $('input').val('');
+            $('input').focus();
+          });
+        });
+
+      });
+    </script>
+
+</body>
+</html>
