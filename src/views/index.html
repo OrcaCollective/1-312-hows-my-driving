@@ -51,24 +51,7 @@
 <script src="https://code.jquery.com/jquery-2.2.1.min.js"
         integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
         crossorigin="anonymous"></script>
-<script>
-      $(function() {
-        console.log('hello world :o');
-
-
-        $('form').submit(function(event) {
-          event.preventDefault();
-          var license = $('input').val();
-          $.post('/lookup?' + $.param({'license': license}), function(data) {
-            console.log('Data: ' + data);
-            $('#license').html(data);
-            $('input').val('');
-            $('input').focus();
-          });
-        });
-
-      });
-    </script>
+<script src="public/main.js"></script>
 
 </body>
 </html>
