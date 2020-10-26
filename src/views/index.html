@@ -26,9 +26,17 @@
 </header>
 
 <main>
+    <div>
+        <form action="/" class="form_override">
+            <button type="submit">Licenses</button>
+        </form>
+        <form action="/names" class="form_override">
+            <button type="submit">Names</button>
+        </form>
+    </div>
     <p class="bold">Seattle Public Vehicle Lookup</p>
     <p>Enter in a license plate</p>
-    <form>
+    <form id="main_form">
         <input type="text" maxlength="100" placeholder="License #">
         <button type="submit">Submit</button>
     </form>

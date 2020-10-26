@@ -18,7 +18,7 @@ def homepage():
     return render_template("index.html")
 
 
-@app.route("/lookup", methods=["POST"])
+@app.route("/license-lookup", methods=["POST"])
 def lookup():
     """Simple API endpoint for dreams.
     In memory, ephemeral, like real dreams.

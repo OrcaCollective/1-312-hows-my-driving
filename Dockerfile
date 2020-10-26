@@ -1,6 +1,7 @@
 FROM python:3.9-slim
 
-ENV PYTHONUNBUFFERED=true
+ENV PYTHONUNBUFFERED=true \
+    FLASK_DEBUG=1
 
 COPY requirements.txt /app/requirements.txt
 

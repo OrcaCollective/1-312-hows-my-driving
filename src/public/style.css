@@ -36,6 +36,11 @@ form {
   border-radius: 3px;
 }
 
+.form_override {
+  max-width: 120px !important;
+  text-align: center;
+}
+
 input {
   display: block;
   margin-bottom: 10px;
