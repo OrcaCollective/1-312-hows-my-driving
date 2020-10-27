@@ -33,10 +33,21 @@ def _data() -> Dict[str, Dict[str, str]]:
 BADGE_DATASET = _data()
 
 
+################################################################################
+# Licenses
+################################################################################
 @app.route("/")
 def homepage():
     """Displays the homepage."""
-    return render_template("index.html")
+    context = {
+        "title": "Seattle Public Vehicle Lookup",
+        "entity_name_long": "license plate",
+        "entity_name_short": "License #",
+        "entity": "license",
+        "data_source": "https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb",
+        "lookup_url": "license-lookup"
+    }
+    return render_template("index.html", **context)
 
 
 @app.route("/license-lookup", methods=["POST"])
@@ -47,8 +58,8 @@ def license_lookup():
 
     html = ""
     # Add a dream to the in-memory database, if given.
-    if "license" in request.args:
-        license = request.args["license"]
+    if "entity" in request.args:
+        license = request.args["entity"]
         try:
             results = client.get(
                 LICENSE_DATASET, limit=1, where=f"license='{license.upper()}'"
@@ -75,16 +86,27 @@ def license_lookup():
     return html
 
 
+################################################################################
+# Badges
+################################################################################
 @app.route("/badge")
 def badge():
-    return render_template("badges.html")
+    context = {
+        "title": "Seattle Officer Badge Lookup",
+        "entity_name_long": "badge number",
+        "entity_name_short": "Badge #",
+        "entity": "badge",
+        "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
+        "lookup_url": "badge-lookup"
+    }
+    return render_template("index.html", **context)
 
 
 @app.route("/badge-lookup", methods=["POST"])
 def badge_lookup():
     html = ""
-    if "badge" in request.args:
-        badge = request.args["badge"]
+    if "entity" in request.args:
+        badge = request.args["entity"]
         try:
             r = BADGE_DATASET.get(badge)
             if not r:
