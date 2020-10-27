@@ -15,7 +15,7 @@ app = Flask(__name__, static_folder="public", template_folder="views")
 client = Socrata("data.seattle.gov", None)
 LICENSE_DATASET = "enxu-fgzb"
 SALARY_DATASET = "2khk-5ukd"
-BADGE_DATASET_PATH = Path("data/spd-badges.csv")
+BADGE_DATASET_PATH = Path(__file__).parent / "data" / "spd-badges.csv"
 
 
 # Set up dataset
