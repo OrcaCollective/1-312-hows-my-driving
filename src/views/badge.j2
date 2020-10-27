@@ -1,0 +1,8 @@
+<p><b>Badge #:</b> {{ Serial }}</p>
+<p><b>Name:</b> {{ name }}</p>
+<p><b>Rank:</b> {{ RankRole }}</p>
+{% if job_title %}
+<p><b>Job Title:</b> {{ job_title }}</p>
+<p><b>Hourly Rate:</b> ${{ hourly_rate }}</p>
+<p><b>Projected salary (w/o overtime):</b> ${{ projected }}</p>
+{% endif %}
