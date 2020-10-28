@@ -95,7 +95,7 @@ def badge_lookup(badge: str) -> str:
             html = "<p><b>No officer found for this badge number</b></p>"
         else:
             context = _augment_with_salary(r)
-            html = render_template("badge.j2", **context)
+            html = render_template("officer.j2", **context)
 
     except Exception as err:
         print(f"Error: {err}")
@@ -119,7 +119,7 @@ def name_lookup(name: str) -> str:
             htmls = []
             for r in _sort_names(records):
                 context = _augment_with_salary(r)
-                htmls.append(render_template("badge.j2", **context))
+                htmls.append(render_template("officer.j2", **context))
             html = "\n<br/>\n".join(htmls)
 
     except Exception as err:
