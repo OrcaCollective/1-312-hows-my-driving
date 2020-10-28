@@ -22,7 +22,7 @@ BADGE_NAME_DATA_FIELDS = [
     "UnitDesc",
 ]
 _DataDict = Dict[str, Dict[str, str]]
-_DataNameLookup = Dict[str, Dict[Tuple[str, str, str], Dict[str, str]]]
+_DataNameLookup = Dict[str, _DataDict]
 
 
 def _data() -> Tuple[_DataDict, _DataNameLookup]:
@@ -37,8 +37,7 @@ def _data() -> Tuple[_DataDict, _DataNameLookup]:
             badges[row["Serial"]] = r
             # There may be numerous rows per unique name, so this makes them
             # easiest to index appropriately/overwrite with the most current value
-            unique = (r["FirstName"], r["MiddleInitMostly"], r["Surname"])
-            names[row["Surname"]][unique] = r
+            names[row["Surname"]][row["Serial"]] = r
 
     return badges, names
 
@@ -106,6 +105,11 @@ def badge_lookup(badge: str) -> str:
     return html
 
 
+def _sort_names(record: _DataDict):
+    for r in sorted(record.values(), key=lambda x: x["FirstName"]):
+        yield r
+
+
 def name_lookup(name: str) -> str:
     try:
         records = NAME_DATASET.get(name)
@@ -113,7 +117,7 @@ def name_lookup(name: str) -> str:
             html = "<p><b>No officer found for this name</b></p>"
         else:
             htmls = []
-            for _, r in sorted(records.items(), key=lambda x: x[0][0]):
+            for r in _sort_names(records):
                 context = _augment_with_salary(r)
                 htmls.append(render_template("badge.j2", **context))
             html = "\n<br/>\n".join(htmls)
