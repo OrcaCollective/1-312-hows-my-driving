@@ -48,34 +48,37 @@ def license_lookup(license: str) -> str:
     return html
 
 
+def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
+    first = record["FirstName"]
+    last = record["Surname"]
+    middle = record["MiddleInitMostly"]
+    if middle:
+        name = f"{first} {middle} {last}"
+    else:
+        name = f"{first} {last}"
+    context = {**record, "name": name}
+
+    results = client.get(
+        SALARY_DATASET,
+                limit=1,
+                where=f"department='Police Department' AND last_name='{last}' AND first_name='{first}'",
+    )
+    if results:
+        s = results[0]
+        projected = Decimal(s["hourly_rate"]) * 40 * 50
+        # Format with commas
+        context = {**context, **s, "projected": f"{projected:,}"}
+
+    return context
+
+
 def badge_lookup(badge: str) -> str:
     try:
         r = BADGE_DATASET.get(badge)
         if not r:
             html = "<p><b>No officer found for this badge number</b></p>"
         else:
-            first = r["FirstName"]
-            last = r["Surname"]
-            middle = r["MiddleInitMostly"]
-            if middle:
-                name = f"{first} {middle} {last}"
-            else:
-                name = f"{first} {last}"
-            context = {
-                **r,
-                "name": name
-            }
-
-            results = client.get(
-                SALARY_DATASET,
-                limit=1,
-                where=f"department='Police Department' AND last_name='{last}' AND first_name='{first}'",
-            )
-            if results:
-                s = results[0]
-                projected = Decimal(s['hourly_rate']) * 40 * 50
-                # Format with commas
-                context = {**context, **s, "projected": f"{projected:,}"}
+            context = _augment_with_salary(r)
             html = render_template("badge.j2", **context)
 
     except Exception as err:
