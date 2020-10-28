@@ -15,7 +15,6 @@ LICENSE_CONTEXT = {
     "title": "Seattle Public Vehicle Lookup",
     "entity_name_long": "license plate",
     "entity_name_short": "License #",
-    "entity": "license",
     "data_source": "https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb",
     "lookup_url": "license-lookup",
 }
@@ -40,7 +39,6 @@ BADGE_CONTEXT = {
     "title": "Seattle Officer Badge Lookup",
     "entity_name_long": "badge number",
     "entity_name_short": "Badge #",
-    "entity": "badge",
     "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
     "lookup_url": "badge-lookup",
 }
