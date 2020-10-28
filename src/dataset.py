@@ -2,7 +2,7 @@ from collections import defaultdict
 from csv import DictReader
 from decimal import Decimal
 from pathlib import Path
-from typing import Dict, Tuple, Set
+from typing import Dict, Tuple
 
 from flask import render_template
 from sodapy import Socrata
@@ -22,20 +22,23 @@ BADGE_NAME_DATA_FIELDS = [
     "UnitDesc",
 ]
 _DataDict = Dict[str, Dict[str, str]]
-_DataList = Dict[str, Set[Dict[str, str]]]
+_DataNameLookup = Dict[str, Dict[Tuple[str, str, str], Dict[str, str]]]
 
 
-def _data() -> Tuple[_DataDict, _DataList]:
+def _data() -> Tuple[_DataDict, _DataNameLookup]:
     """Set up initial dataset"""
     print("Loading initial badge data")
     badges = {}
-    names = defaultdict(set)
+    names = defaultdict(dict)
     with BADGE_DATASET_PATH.open("r") as file:
         reader = DictReader(file)
         for row in reader:
             r = {k: row[k] for k in BADGE_NAME_DATA_FIELDS}
             badges[row["Serial"]] = r
-            names[row["Surname"]].add(frozenset(r.items()))
+            # There may be numerous rows per unique name, so this makes them
+            # easiest to index appropriately/overwrite with the most current value
+            unique = (r["FirstName"], r["MiddleInitMostly"], r["Surname"])
+            names[row["Surname"]][unique] = r
 
     return badges, names
 
@@ -110,11 +113,10 @@ def name_lookup(name: str) -> str:
             html = "<p><b>No officer found for this name</b></p>"
         else:
             htmls = []
-            for rec in records:
-                r = {k: v for k, v in rec}
+            for _, r in sorted(records.items(), key=lambda x: x[0][0]):
                 context = _augment_with_salary(r)
                 htmls.append(render_template("badge.j2", **context))
-            html = "\n<br/><br/>\n".join(htmls)
+            html = "\n<br/>\n".join(htmls)
 
     except Exception as err:
         print(f"Error: {err}")
