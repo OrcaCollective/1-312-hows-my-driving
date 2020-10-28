@@ -32,9 +32,7 @@
         <button type="submit">Submit</button>
     </form>
     <section class="dreams">
-        <div id="{{ entity }}">
-
-        </div>
+        {{ entity_html | safe }}
     </section>
 </main>
 
@@ -55,12 +53,7 @@ $(function() {
   $('#main_form').submit(function(event) {
     event.preventDefault();
     var entity = $('input').val();
-    $.post('/{{ lookup_url }}?' + $.param({'entity': entity}), function(data) {
-      console.log('Data: ' + data);
-      $('#{{ entity }}').html(data);
-      $('input').val('');
-      $('input').focus();
-    });
+    window.location.replace("/{{lookup_url}}/" + entity)
   });
 
 });
