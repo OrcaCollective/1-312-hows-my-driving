@@ -51,7 +51,7 @@ def license_lookup(license: str) -> str:
             LICENSE_DATASET, limit=1, where=f"license='{license.upper()}'"
         )
         if not results:
-            html = "<p><b>No vehicle found for this license</b></p>"
+            html = "<p><b>No vehicle found for this license in public dataset</b></p><p>(not all undercover vehicles have available information)</p>"
         else:
             r = results[0]
             html = render_template("license.j2", **r)
@@ -77,7 +77,7 @@ def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
     results = client.get(
         SALARY_DATASET,
         limit=1,
-        where=f"department='Police Department' AND last_name='{last}' AND first_name='{first}'",
+        where=f"last_name='{last}' AND first_name='{first}'",
     )
     if results:
         s = results[0]
