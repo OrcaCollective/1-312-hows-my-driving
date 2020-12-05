@@ -12,17 +12,22 @@ from sodapy import Socrata
 client = Socrata("data.seattle.gov", None)
 LICENSE_DATASET = "enxu-fgzb"
 SALARY_DATASET = "2khk-5ukd"
-BADGE_DATASET_PATH = Path(__file__).parent / "data" / "spd-badges.csv"
-BADGE_NAME_DATA_FIELDS = [
-    "Serial",
-    "Surname",
-    "MiddleInitMostly",
-    "FirstName",
-    "RankRole",
-    "UnitDesc",
-]
+BADGE_DATASET_PATH = Path(__file__).parent / "data" / "SPD_roster_11-15-20.csv"
 _DataDict = Dict[str, Dict[str, str]]
 _DataNameLookup = Dict[str, _DataDict]
+
+
+class C:
+    """Columns"""
+
+    SERIAL = "Serial"
+    FIRST = "First"
+    MIDDLE = "Middle"
+    LAST = "Last"
+    TITLE = "Title Description"
+    UNIT = "Unit Description"
+
+    fields = [SERIAL, FIRST, MIDDLE, LAST, TITLE, UNIT]
 
 
 def _data() -> Tuple[_DataDict, _DataNameLookup]:
@@ -33,11 +38,11 @@ def _data() -> Tuple[_DataDict, _DataNameLookup]:
     with BADGE_DATASET_PATH.open("r") as file:
         reader = DictReader(file)
         for row in reader:
-            r = {k: row[k] for k in BADGE_NAME_DATA_FIELDS}
-            badges[row["Serial"]] = r
+            r = {k: row[k] for k in C.fields}
+            badges[row[C.SERIAL]] = r
             # There may be numerous rows per unique name, so this makes them
             # easiest to index appropriately/overwrite with the most current value
-            names[row["Surname"]][row["Serial"]] = r
+            names[row[C.LAST]][row[C.SERIAL]] = r
 
     return badges, names
 
@@ -65,14 +70,19 @@ def license_lookup(license: str) -> str:
 
 
 def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
-    first = record["FirstName"]
-    last = record["Surname"]
-    middle = record["MiddleInitMostly"]
+    first = record[C.FIRST]
+    last = record[C.LAST]
+    middle = record[C.MIDDLE]
     if middle:
         name = f"{first} {middle} {last}"
     else:
         name = f"{first} {last}"
-    context = {**record, "name": name}
+    context = {
+        "name": name,
+        "title": record[C.TITLE],
+        "unit": record[C.UNIT],
+        "serial": record[C.SERIAL],
+    }
 
     results = client.get(
         SALARY_DATASET,
@@ -106,7 +116,7 @@ def badge_lookup(badge: str) -> str:
 
 
 def _sort_names(record: _DataDict):
-    for r in sorted(record.values(), key=lambda x: x["FirstName"]):
+    for r in sorted(record.values(), key=lambda x: x[C.FIRST]):
         yield r
 
 
