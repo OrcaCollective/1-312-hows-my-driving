@@ -25,7 +25,8 @@ LICENSE_CONTEXT = {
     "entity_name_long": "license plate",
     "entity_name_short": "License #",
     "data_source": "https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb",
-    "lookup_url": "license-lookup",
+    "lookup_url": "license",
+    "query_param": "license"
 }
 
 
@@ -56,7 +57,8 @@ BADGE_CONTEXT = {
     "entity_name_long": "badge number",
     "entity_name_short": "Badge #",
     "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
-    "lookup_url": "badge-lookup",
+    "lookup_url": "badge",
+    "query_param": "badge"
 }
 
 
@@ -86,7 +88,8 @@ NAME_CONTEXT = {
     "entity_name_long": "last name",
     "entity_name_short": "Lastname",
     "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
-    "lookup_url": "name-lookup",
+    "lookup_url": "name",
+    "query_param": "last"
 }
 
 

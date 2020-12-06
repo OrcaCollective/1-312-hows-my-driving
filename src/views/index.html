@@ -18,7 +18,7 @@
 
 <main>
     <div>
-        <form action="/" class="form_override">
+        <form action="/license" class="form_override">
             <button type="submit">Licenses</button>
         </form>
         <form action="/badge" class="form_override">
@@ -30,8 +30,8 @@
     </div>
     <p class="bold">{{ title }}</p>
     <p>Enter in a {{ entity_name_long }}</p>
-    <form id="main_form">
-        <input type="text" maxlength="100" placeholder="{{ entity_name_short }}">
+    <form action="/{{ lookup_url }}" method="GET">
+        <input id="{{ query_param }}" name="{{ query_param }}" placeholder="{{ entity_name_short }}">
         <button type="submit">Submit</button>
     </form>
     <section class="dreams">
@@ -45,22 +45,6 @@
     <br/>
     <a href="http://twitter.com/AetherUnbound">If I break message my mom</a>
 </footer>
-
-
-<!-- Your web-app is https, so your scripts need to be too -->
-<script src="https://code.jquery.com/jquery-2.2.1.min.js"
-        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
-        crossorigin="anonymous"></script>
-<script>
-$(function() {
-  $('#main_form').submit(function(event) {
-    event.preventDefault();
-    var entity = $('input').val();
-    window.location.replace("/{{lookup_url}}/" + entity)
-  });
-
-});
-</script>
 
 </body>
 </html>
