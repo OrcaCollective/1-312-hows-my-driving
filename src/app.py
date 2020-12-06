@@ -1,11 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 
 import dataset
 
 
 app = Flask(__name__, static_folder="public", template_folder="views")
+
+
+################################################################################
+# Home page reroute
+################################################################################
+@app.route("/")
+def home():
+    """Reroute home URL to license lookup form"""
+    return redirect(url_for('license_page'))
 
 
 ################################################################################
@@ -20,9 +29,16 @@ LICENSE_CONTEXT = {
 }
 
 
-@app.route("/")
+@app.route("/license")
 def license_page():
-    """Displays the homepage."""
+    """License lookup form render"""
+    # Check for badge query params and load if it exists.
+    license = request.args.get('license')
+    if license:
+        html = dataset.badge_lookup(license)
+        return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
+
+    # Return the basic lookup form if not
     return render_template("index.html", **LICENSE_CONTEXT)
 
 
@@ -46,6 +62,13 @@ BADGE_CONTEXT = {
 
 @app.route("/badge")
 def badge_page():
+    """Badge lookup form render"""
+    # Check for badge query params and load if it exists.
+    badge = request.args.get('badge')
+    if badge:
+        html = dataset.badge_lookup(badge)
+        return render_template("index.html", **BADGE_CONTEXT, entity_html=html)
+
     return render_template("index.html", **BADGE_CONTEXT)
 
 
@@ -69,6 +92,12 @@ NAME_CONTEXT = {
 
 @app.route("/name")
 def name_page():
+    """Officer name lookup form render"""
+    last_name = request.args.get('last')
+    if last_name:
+        html = dataset.name_lookup(last_name)
+        return render_template("index.html", **NAME_CONTEXT, entity_html=html)
+
     return render_template("index.html", **NAME_CONTEXT)
 
 
