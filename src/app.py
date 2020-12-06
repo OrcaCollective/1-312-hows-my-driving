@@ -35,7 +35,7 @@ def license_page():
     # Check for badge query params and load if it exists.
     license = request.args.get('license')
     if license:
-        html = dataset.badge_lookup(license)
+        html = dataset.license_lookup(license)
         return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
 
     # Return the basic lookup form if not
