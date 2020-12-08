@@ -35,12 +35,12 @@ def license_page():
     """License lookup form render"""
     # Check for badge query params and load if it exists.
     license = request.args.get('license')
+    html = ""
     if license:
         html = dataset.license_lookup(license)
-        return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
 
     # Return the basic lookup form if not
-    return render_template("index.html", **LICENSE_CONTEXT)
+    return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
 
 
 @app.route("/license-lookup/<license>")
@@ -67,11 +67,11 @@ def badge_page():
     """Badge lookup form render"""
     # Check for badge query params and load if it exists.
     badge = request.args.get('badge')
+    html = ""
     if badge:
         html = dataset.badge_lookup(badge)
-        return render_template("index.html", **BADGE_CONTEXT, entity_html=html)
 
-    return render_template("index.html", **BADGE_CONTEXT)
+    return render_template("index.html", **BADGE_CONTEXT, entity_html=html)
 
 
 @app.route("/badge-lookup/<badge>")
@@ -97,11 +97,11 @@ NAME_CONTEXT = {
 def name_page():
     """Officer name lookup form render"""
     last_name = request.args.get('last')
+    html = ""
     if last_name:
         html = dataset.name_lookup(last_name)
-        return render_template("index.html", **NAME_CONTEXT, entity_html=html)
 
-    return render_template("index.html", **NAME_CONTEXT)
+    return render_template("index.html", **NAME_CONTEXT, entity_html=html)
 
 
 @app.route("/name-lookup/<name>")
