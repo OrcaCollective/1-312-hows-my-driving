@@ -51,22 +51,26 @@ BADGE_DATASET, NAME_DATASET = _data()
 
 
 def license_lookup(license: str) -> str:
-    try:
-        results = client.get(
-            LICENSE_DATASET, limit=1, where=f"license='{license.upper()}'"
-        )
-        if not results:
-            html = "<p><b>No vehicle found for this license in public dataset</b></p><p>(not all undercover vehicles have available information)</p>"
-        else:
-            r = results[0]
-            html = render_template("license.j2", **r)
+    if license:
+        try:
+            results = client.get(
+                LICENSE_DATASET, limit=1, where=f"license='{license.upper()}'"
+            )
+            if not results:
+                html = "<p><b>No vehicle found for this license in public dataset</b></p><p>(not all undercover vehicles have available information)</p>"
+            else:
+                r = results[0]
+                html = render_template("license.j2", **r)
 
-    except Exception as err:
-        print(f"Error: {err}")
-        html = f"<p><b>Error:</b> {err}"
+        except Exception as err:
+            print(f"Error: {err}")
+            html = f"<p><b>Error:</b> {err}"
 
-    print("Final HTML:\n{}".format(html))
-    return html
+        print("Final HTML:\n{}".format(html))
+        return html
+
+    else:
+        return ""
 
 
 def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
@@ -99,20 +103,24 @@ def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
 
 
 def badge_lookup(badge: str) -> str:
-    try:
-        r = BADGE_DATASET.get(badge)
-        if not r:
-            html = "<p><b>No officer found for this badge number</b></p>"
-        else:
-            context = _augment_with_salary(r)
-            html = render_template("officer.j2", **context)
+    if badge:
+        try:
+            r = BADGE_DATASET.get(badge)
+            if not r:
+                html = "<p><b>No officer found for this badge number</b></p>"
+            else:
+                context = _augment_with_salary(r)
+                html = render_template("officer.j2", **context)
 
-    except Exception as err:
-        print(f"Error: {err}")
-        html = f"<p><b>Error:</b> {err}"
+        except Exception as err:
+            print(f"Error: {err}")
+            html = f"<p><b>Error:</b> {err}"
 
-    print("Final HTML:\n{}".format(html))
-    return html
+        print("Final HTML:\n{}".format(html))
+        return html
+
+    else:
+        return ""
 
 
 def _sort_names(record: _DataDict):
@@ -120,21 +128,25 @@ def _sort_names(record: _DataDict):
         yield r
 
 
-def name_lookup(name: str) -> str:
-    try:
-        records = NAME_DATASET.get(name)
-        if not records:
-            html = "<p><b>No officer found for this name</b></p>"
-        else:
-            htmls = []
-            for r in _sort_names(records):
-                context = _augment_with_salary(r)
-                htmls.append(render_template("officer.j2", **context))
-            html = "\n<br/>\n".join(htmls)
+def name_lookup(last_name: str) -> str:
+    if last_name:
+        try:
+            records = NAME_DATASET.get(last_name)
+            if not records:
+                html = "<p><b>No officer found for this name</b></p>"
+            else:
+                htmls = []
+                for r in _sort_names(records):
+                    context = _augment_with_salary(r)
+                    htmls.append(render_template("officer.j2", **context))
+                html = "\n<br/>\n".join(htmls)
 
-    except Exception as err:
-        print(f"Error: {err}")
-        html = f"<p><b>Error:</b> {err}"
+        except Exception as err:
+            print(f"Error: {err}")
+            html = f"<p><b>Error:</b> {err}"
 
-    print("Final HTML:\n{}".format(html))
-    return html
+        print("Final HTML:\n{}".format(html))
+        return html
+
+    else:
+        return ""

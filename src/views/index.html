@@ -31,7 +31,9 @@
     <p class="bold">{{ title }}</p>
     <p>Enter in a {{ entity_name_long }}</p>
     <form action="/{{ lookup_url }}" method="GET">
-        <input id="{{ query_param }}" name="{{ query_param }}" placeholder="{{ entity_name_short }}">
+        {% for entity in entities %}
+            <input id="{{ entity.query_param }}" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}">
+        {% endfor %}
         <button type="submit">Submit</button>
     </form>
     <section class="dreams">

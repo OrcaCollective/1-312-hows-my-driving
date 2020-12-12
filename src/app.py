@@ -22,11 +22,20 @@ def home():
 ################################################################################
 LICENSE_CONTEXT = {
     "title": "Seattle Public Vehicle Lookup",
-    "entity_name_long": "license plate",
-    "entity_name_short": "License #",
+    "entities": [
+        {
+            "entity_name_long": "license plate",
+            "entity_name_short": "License #",
+            "query_param": "license"
+        },
+        {
+            "entity_name_long": "vehicle make",
+            "entity_name_short": "Vehicle Make",
+            "query_param": "license"
+        }
+    ],
     "data_source": "https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb",
-    "lookup_url": "license",
-    "query_param": "license"
+    "lookup_url": "license"
 }
 
 
@@ -35,9 +44,7 @@ def license_page():
     """License lookup form render"""
     # Check for badge query params and load if it exists.
     license = request.args.get('license')
-    html = ""
-    if license:
-        html = dataset.license_lookup(license)
+    html = dataset.license_lookup(license)
 
     # Return the basic lookup form if not
     return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
@@ -54,11 +61,15 @@ def license_lookup(license):
 ################################################################################
 BADGE_CONTEXT = {
     "title": "Seattle Officer Badge Lookup",
-    "entity_name_long": "badge number",
-    "entity_name_short": "Badge #",
+    "entities": [
+        {
+            "entity_name_long": "badge number",
+            "entity_name_short": "Badge #",
+            "query_param": "badge"
+        }
+    ],
     "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
-    "lookup_url": "badge",
-    "query_param": "badge"
+    "lookup_url": "badge"
 }
 
 
@@ -67,9 +78,7 @@ def badge_page():
     """Badge lookup form render"""
     # Check for badge query params and load if it exists.
     badge = request.args.get('badge')
-    html = ""
-    if badge:
-        html = dataset.badge_lookup(badge)
+    html = dataset.badge_lookup(badge)
 
     return render_template("index.html", **BADGE_CONTEXT, entity_html=html)
 
@@ -85,11 +94,25 @@ def badge_lookup(badge):
 ################################################################################
 NAME_CONTEXT = {
     "title": "Seattle Officer Name Lookup",
-    "entity_name_long": "last name",
-    "entity_name_short": "Lastname",
+    "entities": [
+        {
+            "entity_name_long": "last name",
+            "entity_name_short": "Last Name",
+            "query_param": "last"
+        },
+        {
+            "entity_name_long": "first name",
+            "entity_name_short": "First Name",
+            "query_param": "first"
+        },
+        {
+            "entity_name_long": "badge number",
+            "entity_name_short": "Badge Number",
+            "query_param": "badge"
+        }
+    ],
     "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
-    "lookup_url": "name",
-    "query_param": "last"
+    "lookup_url": "name"
 }
 
 
@@ -97,9 +120,9 @@ NAME_CONTEXT = {
 def name_page():
     """Officer name lookup form render"""
     last_name = request.args.get('last')
-    html = ""
-    if last_name:
-        html = dataset.name_lookup(last_name)
+    first_name = request.args.get('first')
+    badge = request.args.get('badge')
+    html = dataset.name_lookup(last_name)
 
     return render_template("index.html", **NAME_CONTEXT, entity_html=html)
 
