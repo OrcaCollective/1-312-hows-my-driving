@@ -1,53 +1,19 @@
-from collections import defaultdict
-from csv import DictReader
 from decimal import Decimal
-from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List, Optional, Any
 
 from flask import render_template
 from sodapy import Socrata
+import sqlite3
 
 
 # Set up the sodapy client
 client = Socrata("data.seattle.gov", None)
 LICENSE_DATASET = "enxu-fgzb"
 SALARY_DATASET = "2khk-5ukd"
-BADGE_DATASET_PATH = Path(__file__).parent / "data" / "SPD_roster_11-15-20.csv"
-_DataDict = Dict[str, Dict[str, str]]
-_DataNameLookup = Dict[str, _DataDict]
 
-
-class C:
-    """Columns"""
-
-    SERIAL = "Serial"
-    FIRST = "First"
-    MIDDLE = "Middle"
-    LAST = "Last"
-    TITLE = "Title Description"
-    UNIT = "Unit Description"
-
-    fields = [SERIAL, FIRST, MIDDLE, LAST, TITLE, UNIT]
-
-
-def _data() -> Tuple[_DataDict, _DataNameLookup]:
-    """Set up initial dataset"""
-    print("Loading initial badge data")
-    badges = {}
-    names = defaultdict(dict)
-    with BADGE_DATASET_PATH.open("r") as file:
-        reader = DictReader(file)
-        for row in reader:
-            r = {k: row[k] for k in C.fields}
-            badges[row[C.SERIAL]] = r
-            # There may be numerous rows per unique name, so this makes them
-            # easiest to index appropriately/overwrite with the most current value
-            names[row[C.LAST]][row[C.SERIAL]] = r
-
-    return badges, names
-
-
-BADGE_DATASET, NAME_DATASET = _data()
+# Connect to SQL database
+sql_conn = sqlite3.connect('./data/1-312-data.db')
+sql_curs = sql_conn.cursor()
 
 
 def license_lookup(license: str) -> str:
@@ -73,19 +39,20 @@ def license_lookup(license: str) -> str:
         return ""
 
 
-def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
-    first = record[C.FIRST]
-    last = record[C.LAST]
-    middle = record[C.MIDDLE]
+def _augment_with_salary(record: Tuple) -> Dict[str, str]:
+    # The tuple positions are following the database schema
+    first = record[1]
+    last = record[3]
+    middle = record[2]
     if middle:
         name = f"{first} {middle} {last}"
     else:
         name = f"{first} {last}"
     context = {
         "name": name,
-        "title": record[C.TITLE],
-        "unit": record[C.UNIT],
-        "serial": record[C.SERIAL],
+        "title": record[4],
+        "unit": record[5],
+        "serial": record[0],
     }
 
     results = client.get(
@@ -102,36 +69,18 @@ def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
     return context
 
 
-def badge_lookup(badge: str) -> str:
-    if badge:
-        try:
-            r = BADGE_DATASET.get(badge)
-            if not r:
-                html = "<p><b>No officer found for this badge number</b></p>"
-            else:
-                context = _augment_with_salary(r)
-                html = render_template("officer.j2", **context)
-
-        except Exception as err:
-            print(f"Error: {err}")
-            html = f"<p><b>Error:</b> {err}"
-
-        print("Final HTML:\n{}".format(html))
-        return html
-
-    else:
-        return ""
-
-
-def _sort_names(record: _DataDict):
-    for r in sorted(record.values(), key=lambda x: x[C.FIRST]):
+def _sort_names(record: List[Tuple]) -> Tuple:
+    for r in sorted(record, key=lambda x: x[3]):
         yield r
 
 
-def name_lookup(last_name: str) -> str:
-    if last_name:
+def name_lookup(last_name: Any, first_name: Any, badge: Any) -> str:
+    if last_name or first_name or badge:
         try:
-            records = NAME_DATASET.get(last_name)
+            records = sql_curs.execute(
+                "SELECT * FROM officers WHERE Last = ? OR First = ? OR Serial = ?",
+                (last_name, first_name, badge),
+            ).fetchall()
             if not records:
                 html = "<p><b>No officer found for this name</b></p>"
             else:

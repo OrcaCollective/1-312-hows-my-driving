@@ -27,11 +27,6 @@ LICENSE_CONTEXT = {
             "entity_name_long": "license plate",
             "entity_name_short": "License #",
             "query_param": "license"
-        },
-        {
-            "entity_name_long": "vehicle make",
-            "entity_name_short": "Vehicle Make",
-            "query_param": "license"
         }
     ],
     "data_source": "https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb",
@@ -48,45 +43,6 @@ def license_page():
 
     # Return the basic lookup form if not
     return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
-
-
-@app.route("/license-lookup/<license>")
-def license_lookup(license):
-    html = dataset.license_lookup(license)
-    return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
-
-
-################################################################################
-# Badges
-################################################################################
-BADGE_CONTEXT = {
-    "title": "Seattle Officer Badge Lookup",
-    "entities": [
-        {
-            "entity_name_long": "badge number",
-            "entity_name_short": "Badge #",
-            "query_param": "badge"
-        }
-    ],
-    "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
-    "lookup_url": "badge"
-}
-
-
-@app.route("/badge")
-def badge_page():
-    """Badge lookup form render"""
-    # Check for badge query params and load if it exists.
-    badge = request.args.get('badge')
-    html = dataset.badge_lookup(badge)
-
-    return render_template("index.html", **BADGE_CONTEXT, entity_html=html)
-
-
-@app.route("/badge-lookup/<badge>")
-def badge_lookup(badge):
-    html = dataset.badge_lookup(badge)
-    return render_template("index.html", **BADGE_CONTEXT, entity_html=html)
 
 
 ################################################################################
@@ -119,17 +75,32 @@ NAME_CONTEXT = {
 @app.route("/name")
 def name_page():
     """Officer name lookup form render"""
-    last_name = request.args.get('last')
-    first_name = request.args.get('first')
-    badge = request.args.get('badge')
-    html = dataset.name_lookup(last_name)
+    last_name = None if request.args.get('last') == "" else request.args.get('last')
+    first_name = None if request.args.get('first') == "" else request.args.get('first')
+    badge = None if request.args.get('badge') == "" else request.args.get('badge')
+    html = dataset.name_lookup(last_name, first_name, badge)
 
+    return render_template("index.html", **NAME_CONTEXT, entity_html=html)
+
+
+################################################################################
+# Old compatibility endpoints
+################################################################################
+@app.route("/license-lookup/<license>")
+def license_lookup(license):
+    html = dataset.license_lookup(license)
+    return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
+
+
+@app.route("/badge-lookup/<badge>")
+def badge_lookup(badge):
+    html = dataset.name_lookup(None, None, badge)
     return render_template("index.html", **NAME_CONTEXT, entity_html=html)
 
 
 @app.route("/name-lookup/<name>")
 def name_lookup(name):
-    html = dataset.name_lookup(name)
+    html = dataset.name_lookup(name, None, None)
     return render_template("index.html", **NAME_CONTEXT, entity_html=html)
 
 
