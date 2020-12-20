@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Dict, Tuple, List, Optional, Any
+from typing import Dict, Tuple, List, NamedTuple, Generator
 
 from flask import render_template
 from sodapy import Socrata
@@ -15,6 +15,38 @@ SALARY_DATASET = "2khk-5ukd"
 sql_conn = sqlite3.connect('./data/1-312-data.db')
 sql_curs = sql_conn.cursor()
 
+#################################################################################
+# Database format
+#################################################################################
+# Example:
+# Table
+# - column (datatype)
+#################################################################################
+# officers
+# - Serial (string)
+# - First (string)
+# - Middle (string)
+# - Last (string)
+# - TitleDescription (string)
+# - UnitDescription (string)
+#################################################################################
+
+
+class RosterRecord(NamedTuple):
+    serial: int
+    first:  str
+    last:   str
+    middle: str
+    title:  str
+    unit:   str
+
+
+def _sort_names(records: List[Tuple]) -> Generator[RosterRecord, None, None]:
+    # Convert to named tuples
+    records = [RosterRecord(*r) for r in records]
+    for r in sorted(records, key=lambda x: x.last):
+        yield r
+
 
 def license_lookup(license: str) -> str:
     if license:
@@ -23,7 +55,8 @@ def license_lookup(license: str) -> str:
                 LICENSE_DATASET, limit=1, where=f"license='{license.upper()}'"
             )
             if not results:
-                html = "<p><b>No vehicle found for this license in public dataset</b></p><p>(not all undercover vehicles have available information)</p>"
+                html = "<p><b>No vehicle found for this license in public dataset</b>" \
+                       "</p><p>(not all undercover vehicles have available information)</p>"
             else:
                 r = results[0]
                 html = render_template("license.j2", **r)
@@ -39,26 +72,23 @@ def license_lookup(license: str) -> str:
         return ""
 
 
-def _augment_with_salary(record: Tuple) -> Dict[str, str]:
+def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
     # The tuple positions are following the database schema
-    first = record[1]
-    last = record[3]
-    middle = record[2]
-    if middle:
-        name = f"{first} {middle} {last}"
+    if record.middle:
+        name = f"{record.first} {record.middle} {record.last}"
     else:
-        name = f"{first} {last}"
+        name = f"{record.first} {record.last}"
     context = {
         "name": name,
-        "title": record[4],
-        "unit": record[5],
-        "serial": record[0],
+        "title": record.title,
+        "unit": record.unit,
+        "serial": record.serial,
     }
 
     results = client.get(
         SALARY_DATASET,
         limit=1,
-        where=f"last_name='{last}' AND first_name='{first}'",
+        where=f"last_name='{record.last}' AND first_name='{record.first}'",
     )
     if results:
         s = results[0]
@@ -69,18 +99,31 @@ def _augment_with_salary(record: Tuple) -> Dict[str, str]:
     return context
 
 
-def _sort_names(record: List[Tuple]) -> Tuple:
-    for r in sorted(record, key=lambda x: x[3]):
-        yield r
+def _build_sql_query(queries: List[Tuple]) -> (str, Tuple):
+    # (column, operator, value)
+    query_list = []
+    query_tuple = ()
+    for query in queries:
+        if query[2]:
+            query_list.append(" ".join(query[:2]) + " ?")
+            query_tuple += (query[2],)
+    return " AND ".join(query_list), query_tuple
 
 
-def name_lookup(last_name: Any, first_name: Any, badge: Any) -> str:
-    if last_name or first_name or badge:
+def name_lookup(first_name: str, last_name: str, badge: str) -> str:
+    if not (first_name or last_name or badge):
+        return ""
+    else:
+        base_sql_query = "SELECT * FROM officers WHERE "
+        queries_list = [
+            ("First", "LIKE", first_name),
+            ("Last", "LIKE", last_name),
+            ("Serial", "=", badge)
+        ]
+        filter_sql_query, query_tuple = _build_sql_query(queries_list)
+        sql_query = base_sql_query + filter_sql_query
         try:
-            records = sql_curs.execute(
-                "SELECT * FROM officers WHERE Last = ? OR First = ? OR Serial = ?",
-                (last_name, first_name, badge),
-            ).fetchall()
+            records = sql_curs.execute(sql_query, query_tuple,).fetchall()
             if not records:
                 html = "<p><b>No officer found for this name</b></p>"
             else:
@@ -96,6 +139,3 @@ def name_lookup(last_name: Any, first_name: Any, badge: Any) -> str:
 
         print("Final HTML:\n{}".format(html))
         return html
-
-    else:
-        return ""

@@ -52,14 +52,14 @@ NAME_CONTEXT = {
     "title": "Seattle Officer Name Lookup",
     "entities": [
         {
-            "entity_name_long": "last name",
-            "entity_name_short": "Last Name",
-            "query_param": "last"
-        },
-        {
             "entity_name_long": "first name",
             "entity_name_short": "First Name",
             "query_param": "first"
+        },
+        {
+            "entity_name_long": "last name",
+            "entity_name_short": "Last Name",
+            "query_param": "last"
         },
         {
             "entity_name_long": "badge number",
@@ -75,10 +75,10 @@ NAME_CONTEXT = {
 @app.route("/name")
 def name_page():
     """Officer name lookup form render"""
-    last_name = None if request.args.get('last') == "" else request.args.get('last')
-    first_name = None if request.args.get('first') == "" else request.args.get('first')
-    badge = None if request.args.get('badge') == "" else request.args.get('badge')
-    html = dataset.name_lookup(last_name, first_name, badge)
+    first_name = request.args.get('first')
+    last_name = request.args.get('last')
+    badge = request.args.get('badge')
+    html = dataset.name_lookup(first_name, last_name, badge)
 
     return render_template("index.html", **NAME_CONTEXT, entity_html=html)
 
