@@ -100,14 +100,14 @@ def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
 
 
 def _build_sql_query(queries: List[Tuple]) -> (str, Tuple):
-    # (column, operator, value)
-    query_list = []
-    query_tuple = ()
-    for query in queries:
-        if query[2]:
-            query_list.append(" ".join(query[:2]) + " ?")
-            query_tuple += (query[2],)
-    return " AND ".join(query_list), query_tuple
+    query_statements = []
+    parameters = []
+    for field, operator, value in queries:
+        if not value:
+            continue
+        query_statements.append(f"{field} {operator} ?")
+        parameters.append(value)
+    return " AND ".join(query_statements), parameters
 
 
 def name_lookup(first_name: str, last_name: str, badge: str) -> str:
