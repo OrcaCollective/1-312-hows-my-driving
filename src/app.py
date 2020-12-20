@@ -53,12 +53,12 @@ NAME_CONTEXT = {
     "entities": [
         {
             "entity_name_long": "first name",
-            "entity_name_short": "First Name",
+            "entity_name_short": "First Name - You can use % for a wildcard match",
             "query_param": "first"
         },
         {
             "entity_name_long": "last name",
-            "entity_name_short": "Last Name",
+            "entity_name_short": "Last Name - You can use % for a wildcard match",
             "query_param": "last"
         },
         {
