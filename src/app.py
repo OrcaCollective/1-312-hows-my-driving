@@ -53,12 +53,12 @@ NAME_CONTEXT = {
     "entities": [
         {
             "entity_name_long": "first name",
-            "entity_name_short": "First Name - You can use % for a wildcard match",
+            "entity_name_short": "First Name - Start or end name with % for partial matches",
             "query_param": "first"
         },
         {
             "entity_name_long": "last name",
-            "entity_name_short": "Last Name - You can use % for a wildcard match",
+            "entity_name_short": "Last Name - Start or end name with % for partial matches",
             "query_param": "last"
         },
         {

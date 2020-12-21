@@ -99,7 +99,7 @@ def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
     return context
 
 
-def _build_sql_query(queries: List[Tuple]) -> (str, Tuple):
+def _build_sql_query(queries: List[Tuple]) -> Tuple[str, List[str]]:
     query_statements = []
     parameters = []
     for field, operator, value in queries:
