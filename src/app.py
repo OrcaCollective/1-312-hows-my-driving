@@ -14,7 +14,7 @@ app = Flask(__name__, static_folder="public", template_folder="views")
 @app.route("/")
 def home():
     """Reroute home URL to license lookup form"""
-    return redirect(url_for('license_page'))
+    return redirect(url_for("license_page"))
 
 
 ################################################################################
@@ -22,14 +22,9 @@ def home():
 ################################################################################
 LICENSE_CONTEXT = {
     "title": "Seattle Public Vehicle Lookup",
-    "entities": [
-        {
-            "entity_name_short": "License (wildcard)",
-            "query_param": "license"
-        }
-    ],
+    "entities": [{"entity_name_short": "License (wildcard)", "query_param": "license"}],
     "data_source": "https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb",
-    "lookup_url": "license"
+    "lookup_url": "license",
 }
 
 
@@ -37,7 +32,7 @@ LICENSE_CONTEXT = {
 def license_page():
     """License lookup form render"""
     # Check for badge query params and load if it exists.
-    license = request.args.get('license')
+    license = request.args.get("license")
     html = dataset.license_lookup(license)
 
     # Return the basic lookup form if not
@@ -50,30 +45,21 @@ def license_page():
 NAME_CONTEXT = {
     "title": "Seattle Officer Name Lookup",
     "entities": [
-        {
-            "entity_name_short": "First Name (wildcard)",
-            "query_param": "first"
-        },
-        {
-            "entity_name_short": "Last Name (wildcard)",
-            "query_param": "last"
-        },
-        {
-            "entity_name_short": "Badge Number",
-            "query_param": "badge"
-        }
+        {"entity_name_short": "First Name (wildcard)", "query_param": "first"},
+        {"entity_name_short": "Last Name (wildcard)", "query_param": "last"},
+        {"entity_name_short": "Badge Number", "query_param": "badge"},
     ],
     "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
-    "lookup_url": "name"
+    "lookup_url": "name",
 }
 
 
 @app.route("/name")
 def name_page():
     """Officer name lookup form render"""
-    first_name = request.args.get('first')
-    last_name = request.args.get('last')
-    badge = request.args.get('badge')
+    first_name = request.args.get("first")
+    last_name = request.args.get("last")
+    badge = request.args.get("badge")
     html = dataset.name_lookup(first_name, last_name, badge)
 
     return render_template("index.html", **NAME_CONTEXT, entity_html=html)
