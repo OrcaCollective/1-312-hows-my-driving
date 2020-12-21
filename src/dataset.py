@@ -1,4 +1,5 @@
 from decimal import Decimal
+from pathlib import Path
 from typing import Dict, Tuple, List, NamedTuple, Generator
 
 from flask import render_template
@@ -27,6 +28,7 @@ import sqlite3
 client = Socrata("data.seattle.gov", None)
 LICENSE_DATASET = "enxu-fgzb"
 SALARY_DATASET = "2khk-5ukd"
+DATASET_PATH = Path(__file__).absolute().parent / "data" / "1-312-data.db"
 
 
 class RosterRecord(NamedTuple):
@@ -120,7 +122,7 @@ def name_lookup(first_name: str, last_name: str, badge: str) -> str:
         filter_sql_query, query_tuple = _build_sql_query(queries_list)
         sql_query = base_sql_query + filter_sql_query
         try:
-            with sqlite3.connect('./data/1-312-data.db') as sql_conn:
+            with sqlite3.connect(DATASET_PATH) as sql_conn:
                 sql_curs = sql_conn.cursor()
                 records = sql_curs.execute(sql_query, query_tuple,).fetchall()
                 if not records:
