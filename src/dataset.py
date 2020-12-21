@@ -33,11 +33,11 @@ DATASET_PATH = Path(__file__).absolute().parent / "data" / "1-312-data.db"
 
 class RosterRecord(NamedTuple):
     serial: int
-    first:  str
+    first: str
     middle: str
-    last:   str
-    title:  str
-    unit:   str
+    last: str
+    title: str
+    unit: str
 
 
 def _sort_names(records: List[Tuple]) -> Generator[RosterRecord, None, None]:
@@ -54,8 +54,10 @@ def license_lookup(license: str) -> str:
                 LICENSE_DATASET, limit=1, where=f"license like '{license.upper()}'"
             )
             if not results:
-                html = "<p><b>No vehicle found for this license in public dataset</b>" \
-                       "</p><p>(not all undercover vehicles have available information)</p>"
+                html = (
+                    "<p><b>No vehicle found for this license in public dataset</b>"
+                    "</p><p>(not all undercover vehicles have available information)</p>"
+                )
             else:
                 r = results[0]
                 html = render_template("license.j2", **r)
@@ -117,7 +119,7 @@ def name_lookup(first_name: str, last_name: str, badge: str) -> str:
         queries_list = [
             ("First", "LIKE", first_name),
             ("Last", "LIKE", last_name),
-            ("Serial", "=", badge)
+            ("Serial", "=", badge),
         ]
         filter_sql_query, query_tuple = _build_sql_query(queries_list)
         sql_query = base_sql_query + filter_sql_query
