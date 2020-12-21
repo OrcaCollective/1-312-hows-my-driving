@@ -24,8 +24,7 @@ LICENSE_CONTEXT = {
     "title": "Seattle Public Vehicle Lookup",
     "entities": [
         {
-            "entity_name_long": "license plate",
-            "entity_name_short": "License #",
+            "entity_name_short": "License (wildcard)",
             "query_param": "license"
         }
     ],
@@ -52,17 +51,14 @@ NAME_CONTEXT = {
     "title": "Seattle Officer Name Lookup",
     "entities": [
         {
-            "entity_name_long": "first name",
-            "entity_name_short": "First Name (start/end with % for partial matches)",
+            "entity_name_short": "First Name (wildcard)",
             "query_param": "first"
         },
         {
-            "entity_name_long": "last name",
-            "entity_name_short": "Last Name (start/end with % for partial matches)",
+            "entity_name_short": "Last Name (wildcard)",
             "query_param": "last"
         },
         {
-            "entity_name_long": "badge number",
             "entity_name_short": "Badge Number",
             "query_param": "badge"
         }
