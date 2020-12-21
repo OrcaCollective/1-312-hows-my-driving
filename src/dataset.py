@@ -49,7 +49,7 @@ def license_lookup(license: str) -> str:
     if license:
         try:
             results = client.get(
-                LICENSE_DATASET, limit=1, where=f"license='{license.upper()}'"
+                LICENSE_DATASET, limit=1, where=f"license like '{license.upper()}'"
             )
             if not results:
                 html = "<p><b>No vehicle found for this license in public dataset</b>" \

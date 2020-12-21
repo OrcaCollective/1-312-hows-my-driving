@@ -26,7 +26,8 @@
         </form>
     </div>
     <p class="bold">{{ title }}</p>
-    <p>Enter in a {{ entity_name_long }}</p>
+    <p>Wildcards can be used in specified fields. Use _ for single characters or % for multiple characters.</p>
+    <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
     <form action="/{{ lookup_url }}" method="GET">
         {% for entity in entities %}
             <input id="{{ entity.query_param }}" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}">
