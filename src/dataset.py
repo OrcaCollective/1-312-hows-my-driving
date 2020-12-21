@@ -6,17 +6,8 @@ from sodapy import Socrata
 import sqlite3
 
 
-# Set up the sodapy client
-client = Socrata("data.seattle.gov", None)
-LICENSE_DATASET = "enxu-fgzb"
-SALARY_DATASET = "2khk-5ukd"
-
-# Connect to SQL database
-sql_conn = sqlite3.connect('./data/1-312-data.db')
-sql_curs = sql_conn.cursor()
-
 #################################################################################
-# Database format
+# ./data/1-312-data.db Database format
 #################################################################################
 # Example:
 # Table
@@ -30,6 +21,12 @@ sql_curs = sql_conn.cursor()
 # - TitleDescription (string)
 # - UnitDescription (string)
 #################################################################################
+
+
+# Set up the sodapy client
+client = Socrata("data.seattle.gov", None)
+LICENSE_DATASET = "enxu-fgzb"
+SALARY_DATASET = "2khk-5ukd"
 
 
 class RosterRecord(NamedTuple):
@@ -123,15 +120,17 @@ def name_lookup(first_name: str, last_name: str, badge: str) -> str:
         filter_sql_query, query_tuple = _build_sql_query(queries_list)
         sql_query = base_sql_query + filter_sql_query
         try:
-            records = sql_curs.execute(sql_query, query_tuple,).fetchall()
-            if not records:
-                html = "<p><b>No officer found for this name</b></p>"
-            else:
-                htmls = []
-                for r in _sort_names(records):
-                    context = _augment_with_salary(r)
-                    htmls.append(render_template("officer.j2", **context))
-                html = "\n<br/>\n".join(htmls)
+            with sqlite3.connect('./data/1-312-data.db') as sql_conn:
+                sql_curs = sql_conn.cursor()
+                records = sql_curs.execute(sql_query, query_tuple,).fetchall()
+                if not records:
+                    html = "<p><b>No officer found for this name</b></p>"
+                else:
+                    htmls = []
+                    for r in _sort_names(records):
+                        context = _augment_with_salary(r)
+                        htmls.append(render_template("officer.j2", **context))
+                    html = "\n<br/>\n".join(htmls)
 
         except Exception as err:
             print(f"Error: {err}")
