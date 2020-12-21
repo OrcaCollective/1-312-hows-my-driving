@@ -32,8 +32,8 @@ SALARY_DATASET = "2khk-5ukd"
 class RosterRecord(NamedTuple):
     serial: int
     first:  str
-    last:   str
     middle: str
+    last:   str
     title:  str
     unit:   str
 
