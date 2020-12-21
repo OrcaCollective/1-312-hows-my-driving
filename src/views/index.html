@@ -19,19 +19,18 @@
 <main>
     <div>
         <form action="/license" class="form_override">
-            <button type="submit">Licenses</button>
-        </form>
-        <form action="/badge" class="form_override">
-            <button type="submit">Badges</button>
+            <button type="submit">Vehicles</button>
         </form>
         <form action="/name" class="form_override">
-            <button type="submit">Names</button>
+            <button type="submit">Officers</button>
         </form>
     </div>
     <p class="bold">{{ title }}</p>
     <p>Enter in a {{ entity_name_long }}</p>
     <form action="/{{ lookup_url }}" method="GET">
-        <input id="{{ query_param }}" name="{{ query_param }}" placeholder="{{ entity_name_short }}">
+        {% for entity in entities %}
+            <input id="{{ entity.query_param }}" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}">
+        {% endfor %}
         <button type="submit">Submit</button>
     </form>
     <section class="dreams">

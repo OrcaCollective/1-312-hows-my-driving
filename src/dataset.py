@@ -1,93 +1,91 @@
-from collections import defaultdict
-from csv import DictReader
 from decimal import Decimal
-from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List, NamedTuple, Generator
 
 from flask import render_template
 from sodapy import Socrata
+import sqlite3
+
+
+#################################################################################
+# ./data/1-312-data.db Database format
+#################################################################################
+# Example:
+# Table
+# - column (datatype)
+#################################################################################
+# officers
+# - Serial (string)
+# - First (string)
+# - Middle (string)
+# - Last (string)
+# - TitleDescription (string)
+# - UnitDescription (string)
+#################################################################################
 
 
 # Set up the sodapy client
 client = Socrata("data.seattle.gov", None)
 LICENSE_DATASET = "enxu-fgzb"
 SALARY_DATASET = "2khk-5ukd"
-BADGE_DATASET_PATH = Path(__file__).parent / "data" / "SPD_roster_11-15-20.csv"
-_DataDict = Dict[str, Dict[str, str]]
-_DataNameLookup = Dict[str, _DataDict]
 
 
-class C:
-    """Columns"""
-
-    SERIAL = "Serial"
-    FIRST = "First"
-    MIDDLE = "Middle"
-    LAST = "Last"
-    TITLE = "Title Description"
-    UNIT = "Unit Description"
-
-    fields = [SERIAL, FIRST, MIDDLE, LAST, TITLE, UNIT]
+class RosterRecord(NamedTuple):
+    serial: int
+    first:  str
+    last:   str
+    middle: str
+    title:  str
+    unit:   str
 
 
-def _data() -> Tuple[_DataDict, _DataNameLookup]:
-    """Set up initial dataset"""
-    print("Loading initial badge data")
-    badges = {}
-    names = defaultdict(dict)
-    with BADGE_DATASET_PATH.open("r") as file:
-        reader = DictReader(file)
-        for row in reader:
-            r = {k: row[k] for k in C.fields}
-            badges[row[C.SERIAL]] = r
-            # There may be numerous rows per unique name, so this makes them
-            # easiest to index appropriately/overwrite with the most current value
-            names[row[C.LAST]][row[C.SERIAL]] = r
-
-    return badges, names
-
-
-BADGE_DATASET, NAME_DATASET = _data()
+def _sort_names(records: List[Tuple]) -> Generator[RosterRecord, None, None]:
+    # Convert to named tuples
+    records = [RosterRecord(*r) for r in records]
+    for r in sorted(records, key=lambda x: x.last):
+        yield r
 
 
 def license_lookup(license: str) -> str:
-    try:
-        results = client.get(
-            LICENSE_DATASET, limit=1, where=f"license='{license.upper()}'"
-        )
-        if not results:
-            html = "<p><b>No vehicle found for this license in public dataset</b></p><p>(not all undercover vehicles have available information)</p>"
-        else:
-            r = results[0]
-            html = render_template("license.j2", **r)
+    if license:
+        try:
+            results = client.get(
+                LICENSE_DATASET, limit=1, where=f"license='{license.upper()}'"
+            )
+            if not results:
+                html = "<p><b>No vehicle found for this license in public dataset</b>" \
+                       "</p><p>(not all undercover vehicles have available information)</p>"
+            else:
+                r = results[0]
+                html = render_template("license.j2", **r)
 
-    except Exception as err:
-        print(f"Error: {err}")
-        html = f"<p><b>Error:</b> {err}"
+        except Exception as err:
+            print(f"Error: {err}")
+            html = f"<p><b>Error:</b> {err}"
 
-    print("Final HTML:\n{}".format(html))
-    return html
+        print("Final HTML:\n{}".format(html))
+        return html
 
-
-def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
-    first = record[C.FIRST]
-    last = record[C.LAST]
-    middle = record[C.MIDDLE]
-    if middle:
-        name = f"{first} {middle} {last}"
     else:
-        name = f"{first} {last}"
+        return ""
+
+
+def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
+    # The tuple positions are following the database schema
+    if record.middle:
+        name = f"{record.first} {record.middle} {record.last}"
+    else:
+        name = f"{record.first} {record.last}"
     context = {
         "name": name,
-        "title": record[C.TITLE],
-        "unit": record[C.UNIT],
-        "serial": record[C.SERIAL],
+        "title": record.title,
+        "unit": record.unit,
+        "serial": record.serial,
     }
 
     results = client.get(
         SALARY_DATASET,
         limit=1,
-        where=f"last_name='{last}' AND first_name='{first}'",
+        where=f"last_name='{record.last}' AND first_name='{record.first}'",
     )
     if results:
         s = results[0]
@@ -98,43 +96,45 @@ def _augment_with_salary(record: Dict[str, str]) -> Dict[str, str]:
     return context
 
 
-def badge_lookup(badge: str) -> str:
-    try:
-        r = BADGE_DATASET.get(badge)
-        if not r:
-            html = "<p><b>No officer found for this badge number</b></p>"
-        else:
-            context = _augment_with_salary(r)
-            html = render_template("officer.j2", **context)
-
-    except Exception as err:
-        print(f"Error: {err}")
-        html = f"<p><b>Error:</b> {err}"
-
-    print("Final HTML:\n{}".format(html))
-    return html
+def _build_sql_query(queries: List[Tuple]) -> Tuple[str, List[str]]:
+    query_statements = []
+    parameters = []
+    for field, operator, value in queries:
+        if not value:
+            continue
+        query_statements.append(f"{field} {operator} ?")
+        parameters.append(value)
+    return " AND ".join(query_statements), parameters
 
 
-def _sort_names(record: _DataDict):
-    for r in sorted(record.values(), key=lambda x: x[C.FIRST]):
-        yield r
+def name_lookup(first_name: str, last_name: str, badge: str) -> str:
+    if not (first_name or last_name or badge):
+        return ""
+    else:
+        base_sql_query = "SELECT * FROM officers WHERE "
+        queries_list = [
+            ("First", "LIKE", first_name),
+            ("Last", "LIKE", last_name),
+            ("Serial", "=", badge)
+        ]
+        filter_sql_query, query_tuple = _build_sql_query(queries_list)
+        sql_query = base_sql_query + filter_sql_query
+        try:
+            with sqlite3.connect('./data/1-312-data.db') as sql_conn:
+                sql_curs = sql_conn.cursor()
+                records = sql_curs.execute(sql_query, query_tuple,).fetchall()
+                if not records:
+                    html = "<p><b>No officer found for this name</b></p>"
+                else:
+                    htmls = []
+                    for r in _sort_names(records):
+                        context = _augment_with_salary(r)
+                        htmls.append(render_template("officer.j2", **context))
+                    html = "\n<br/>\n".join(htmls)
 
+        except Exception as err:
+            print(f"Error: {err}")
+            html = f"<p><b>Error:</b> {err}"
 
-def name_lookup(name: str) -> str:
-    try:
-        records = NAME_DATASET.get(name)
-        if not records:
-            html = "<p><b>No officer found for this name</b></p>"
-        else:
-            htmls = []
-            for r in _sort_names(records):
-                context = _augment_with_salary(r)
-                htmls.append(render_template("officer.j2", **context))
-            html = "\n<br/>\n".join(htmls)
-
-    except Exception as err:
-        print(f"Error: {err}")
-        html = f"<p><b>Error:</b> {err}"
-
-    print("Final HTML:\n{}".format(html))
-    return html
+        print("Final HTML:\n{}".format(html))
+        return html
