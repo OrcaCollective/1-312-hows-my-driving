@@ -87,4 +87,5 @@ def name_lookup(name):
 
 
 if __name__ == "__main__":
+    dataset.ping_data_api()
     app.run()

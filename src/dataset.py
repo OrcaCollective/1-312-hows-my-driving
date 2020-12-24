@@ -41,6 +41,11 @@ class RosterRecord(NamedTuple):
     unit: str
 
 
+def ping_data_api() -> int:
+    response = requests.Get(f"{DATA_API_HOST}/ping")
+    return response.status_code
+
+
 def _sort_names(records: List[Tuple]) -> Generator[RosterRecord, None, None]:
     # Convert to named tuples
     records = [RosterRecord(*r) for r in records]
