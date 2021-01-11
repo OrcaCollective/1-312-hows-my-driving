@@ -29,7 +29,7 @@ import requests
 client = Socrata("data.seattle.gov", None)
 LICENSE_DATASET = "enxu-fgzb"
 SALARY_DATASET = "2khk-5ukd"
-DATA_API_HOST = "https://spd-lookup.herokuapp.com"
+DATA_API_HOST = "https://1312api.tech-bloc-sea.dev"
 
 
 class RosterRecord(NamedTuple):
@@ -39,11 +39,6 @@ class RosterRecord(NamedTuple):
     last: str
     title: str
     unit: str
-
-
-def ping_data_api() -> int:
-    response = requests.Get(f"{DATA_API_HOST}/ping")
-    return response.status_code
 
 
 def _sort_names(records: List[Tuple]) -> Generator[RosterRecord, None, None]:
