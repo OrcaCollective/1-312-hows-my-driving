@@ -84,3 +84,7 @@ def badge_lookup(badge):
 def name_lookup(name):
     html = dataset.name_lookup(name, None, None)
     return render_template("index.html", **NAME_CONTEXT, entity_html=html)
+
+
+if __name__ == "__main__":
+    app.run()
