@@ -68,6 +68,10 @@ button:active {
   box-shadow: none;
 }
 
+label {
+  color: #666666;
+}
+
 li {
   margin-bottom: 5px;
 }
