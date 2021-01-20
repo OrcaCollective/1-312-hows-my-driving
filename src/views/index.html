@@ -29,7 +29,10 @@
     <p>Wildcards can be used in specified fields. Use _ for single characters or % for multiple characters.</p>
     <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
     <form action="/{{ lookup_url }}" method="GET">
-        <label><input type="checkbox" id="fuzzy" name="fuzzy" class="checkmark" checked="true"/>Enable Fuzzy Search</label>
+        <label>
+            <input type="checkbox" id="strict_search" name="strict_search" value="strict_search" class="checkmark" {{ "checked" if strict_search else "" }}/>
+            Enable strict searching
+        </label>
         {% for entity in entities %}
             <input id="{{ entity.query_param }}" class="entity-input" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}">
         {% endfor %}
