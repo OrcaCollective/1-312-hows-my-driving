@@ -61,7 +61,7 @@ def name_page():
     last_name = request.args.get("last")
     badge = request.args.get("badge")
     strict_search = request.args.get("strict_search")
-    html = dataset.name_lookup(first_name, last_name, badge)
+    html = dataset.name_lookup(first_name, last_name, badge, strict_search)
 
     return render_template(
         "index.html",
@@ -76,38 +76,23 @@ def name_page():
 ################################################################################
 @app.route("/license-lookup/<license>")
 def license_lookup(license):
+    # LEGACY DO NOT TOUCH
     html = dataset.license_lookup(license)
-    strict_search = request.args.get("strict_search")
-    return render_template(
-        "index.html",
-        **LICENSE_CONTEXT,
-        entity_html=html,
-        strict_search=strict_search,
-    )
+    return render_template("index.html", **LICENSE_CONTEXT, entity_html=html)
 
 
 @app.route("/badge-lookup/<badge>")
 def badge_lookup(badge):
+    # LEGACY DO NOT TOUCH
     html = dataset.name_lookup(None, None, badge)
-    strict_search = request.args.get("strict_search")
-    return render_template(
-        "index.html",
-        **NAME_CONTEXT,
-        entity_html=html,
-        strict_search=strict_search,
-    )
+    return render_template("index.html", **NAME_CONTEXT, entity_html=html)
 
 
 @app.route("/name-lookup/<name>")
 def name_lookup(name):
+    # LEGACY DO NOT TOUCH
     html = dataset.name_lookup(name, None, None)
-    strict_search = request.args.get("strict_search")
-    return render_template(
-        "index.html",
-        **NAME_CONTEXT,
-        entity_html=html,
-        strict_search=strict_search,
-    )
+    return render_template("index.html", **NAME_CONTEXT, entity_html=html)
 
 
 if __name__ == "__main__":
