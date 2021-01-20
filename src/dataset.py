@@ -5,6 +5,7 @@ from typing import Dict, Tuple, List, NamedTuple, Generator
 from flask import render_template
 from sodapy import Socrata
 import sqlite3
+import requests
 
 
 #################################################################################
@@ -28,7 +29,7 @@ import sqlite3
 client = Socrata("data.seattle.gov", None)
 LICENSE_DATASET = "enxu-fgzb"
 SALARY_DATASET = "2khk-5ukd"
-DATASET_PATH = Path(__file__).absolute().parent / "data" / "1-312-data.db"
+DATA_API_HOST = "https://1312api.tech-bloc-sea.dev"
 
 
 class RosterRecord(NamedTuple):
@@ -100,41 +101,40 @@ def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
     return context
 
 
-def _build_sql_query(queries: List[Tuple]) -> Tuple[str, List[str]]:
-    query_statements = []
-    parameters = []
-    for field, operator, value in queries:
-        if not value:
-            continue
-        query_statements.append(f"{field} {operator} ?")
-        parameters.append(value)
-    return " AND ".join(query_statements), parameters
-
-
 def name_lookup(first_name: str, last_name: str, badge: str) -> str:
     if not (first_name or last_name or badge):
         return ""
     else:
-        base_sql_query = "SELECT * FROM officers WHERE "
-        queries_list = [
-            ("First", "LIKE", first_name),
-            ("Last", "LIKE", last_name),
-            ("Serial", "=", badge),
-        ]
-        filter_sql_query, query_tuple = _build_sql_query(queries_list)
-        sql_query = base_sql_query + filter_sql_query
         try:
-            with sqlite3.connect(DATASET_PATH) as sql_conn:
-                sql_curs = sql_conn.cursor()
-                records = sql_curs.execute(sql_query, query_tuple,).fetchall()
-                if not records:
-                    html = "<p><b>No officer found for this name</b></p>"
-                else:
-                    htmls = []
-                    for r in _sort_names(records):
-                        context = _augment_with_salary(r)
-                        htmls.append(render_template("officer.j2", **context))
-                    html = "\n<br/>\n".join(htmls)
+            records = []
+            if not badge:
+                url = f"{DATA_API_HOST}/officer/search?first_name={first_name}&last_name={last_name}"
+            else:
+                url = f"{DATA_API_HOST}/officer?badge={badge}"
+            response = requests.get(url)
+
+            if response.status_code != 200:
+                raise Exception(
+                    f"unexpected status code {response.status_code} when accessing {url}"
+                )
+            records = response.json()
+            if len(records) == 0:
+                html = "<p><b>No officer found for this name</b></p>"
+            else:
+                htmls = []
+                for r in records:
+                    context = _augment_with_salary(
+                        RosterRecord(
+                            r.get("badge_number"),
+                            r.get("first_name"),
+                            r.get("middle_name"),
+                            r.get("last_name"),
+                            r.get("title"),
+                            r.get("unit"),
+                        )
+                    )
+                    htmls.append(render_template("officer.j2", **context))
+                html = "\n<br/>\n".join(htmls)
 
         except Exception as err:
             print(f"Error: {err}")
