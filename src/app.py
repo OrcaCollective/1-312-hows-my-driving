@@ -64,10 +64,7 @@ def name_page():
     html = dataset.name_lookup(first_name, last_name, badge, strict_search)
 
     return render_template(
-        "index.html",
-        **NAME_CONTEXT,
-        entity_html=html,
-        strict_search=strict_search,
+        "index.html", **NAME_CONTEXT, entity_html=html, strict_search=strict_search,
     )
 
 
