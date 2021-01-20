@@ -34,7 +34,7 @@
             Enable strict searching
         </label>
         {% for entity in entities %}
-            <input id="{{ entity.query_param }}" class="entity-input" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}" value="{{ request.args.get(entity.query_param) }}">
+            <input id="{{ entity.query_param }}" class="entity-input" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}" value="{{ request.args.get(entity.query_param, '') }}">
         {% endfor %}
         <button type="submit">Submit</button>
     </form>
