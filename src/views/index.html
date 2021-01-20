@@ -30,7 +30,7 @@
     <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
     <form action="/{{ lookup_url }}" method="GET">
         {% for entity in entities %}
-            <input id="{{ entity.query_param }}" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}">
+            <input id="{{ entity.query_param }}" class="entity-input" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}">
         {% endfor %}
         <button type="submit">Submit</button>
     </form>
