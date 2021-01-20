@@ -90,7 +90,7 @@ def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
     results = client.get(
         SALARY_DATASET,
         limit=1,
-        where=f"last_name='{record.last}' AND first_name='{record.first}'",
+        where=f'last_name="{record.last}" AND first_name="{record.first}"',
     )
     if results:
         s = results[0]
