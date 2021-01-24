@@ -126,9 +126,11 @@ def name_lookup(
             response = requests.get(url)
 
             if response.status_code != 200:
-                raise Exception(
-                    f"unexpected status code {response.status_code} when accessing {url}"
-                )
+                if response.text:
+                    msg = response.text
+                else:
+                    msg = f"unexpected status code {response.status_code} when accessing {url}"
+                raise Exception(msg)
             records = response.json()
             if len(records) == 0:
                 html = "<p><b>No officer found for this name</b></p>"
