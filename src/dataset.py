@@ -101,14 +101,18 @@ def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
     return context
 
 
-def name_lookup(first_name: str, last_name: str, badge: str) -> str:
+def name_lookup(
+    first_name: str, last_name: str, badge: str, strict_search: bool = False
+) -> str:
     if not (first_name or last_name or badge):
         return ""
     else:
         try:
-            records = []
             if not badge:
-                url = f"{DATA_API_HOST}/officer/search?first_name={first_name}&last_name={last_name}"
+                endpoint = f"{DATA_API_HOST}/officer"
+                if not strict_search:
+                    endpoint += "/search"
+                url = f"{endpoint}?first_name={first_name}&last_name={last_name}"
             else:
                 url = f"{DATA_API_HOST}/officer?badge={badge}"
             response = requests.get(url)

@@ -41,7 +41,7 @@ form {
   text-align: center;
 }
 
-input {
+.entity-input {
   display: block;
   margin-bottom: 10px;
   padding: 5px;
@@ -66,6 +66,10 @@ button:hover {
 
 button:active {
   box-shadow: none;
+}
+
+label {
+  color: #666666;
 }
 
 li {
