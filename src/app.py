@@ -43,7 +43,7 @@ def license_page():
 # Names
 ################################################################################
 NAME_CONTEXT = {
-    "title": "Seattle Officer Name Lookup",
+    "title": "Officer Name Lookup",
     "entities": [
         {"entity_name_short": "First Name (wildcard)", "query_param": "first"},
         {"entity_name_short": "Last Name (wildcard)", "query_param": "last"},
@@ -61,10 +61,21 @@ def name_page():
     last_name = request.args.get("last")
     badge = request.args.get("badge")
     strict_search = request.args.get("strict_search")
-    html = dataset.name_lookup(first_name, last_name, badge, strict_search)
+    dataset_select = request.args.get("dataset_select")
+    html = dataset.name_lookup(
+        first_name,
+        last_name,
+        badge,
+        strict_search,
+        dataset_select,
+    )
 
     return render_template(
-        "index.html", **NAME_CONTEXT, entity_html=html, strict_search=strict_search,
+        "index.html",
+        **NAME_CONTEXT,
+        entity_html=html,
+        strict_search=strict_search,
+        dataset_select=dataset_select,
     )
 
 
