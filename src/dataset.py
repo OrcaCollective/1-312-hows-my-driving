@@ -1,10 +1,8 @@
 from decimal import Decimal
-from pathlib import Path
 from typing import Dict, Tuple, List, NamedTuple, Generator
 
 from flask import render_template
 from sodapy import Socrata
-import sqlite3
 import requests
 
 
@@ -39,6 +37,11 @@ class RosterRecord(NamedTuple):
     last: str
     title: str
     unit: str
+
+
+class Datasets:
+    seattle = "seattle"
+    tacoma = "tacoma"
 
 
 def _sort_names(records: List[Tuple]) -> Generator[RosterRecord, None, None]:
@@ -102,29 +105,36 @@ def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
 
 
 def name_lookup(
-    first_name: str, last_name: str, badge: str, strict_search: bool = False
+    first_name: str,
+    last_name: str,
+    badge: str,
+    strict_search: bool = False,
+    dataset_select: str = Datasets.seattle,
 ) -> str:
     if not (first_name or last_name or badge):
         return ""
     else:
         try:
+            endpoint = f"{DATA_API_HOST}/{dataset_select}"
             if not badge:
-                endpoint = f"{DATA_API_HOST}/officer"
+                endpoint = f"{endpoint}/officer"
                 if not strict_search:
                     endpoint += "/search"
                 url = f"{endpoint}?first_name={first_name}&last_name={last_name}"
             else:
-                url = f"{DATA_API_HOST}/officer?badge={badge}"
+                url = f"{endpoint}/officer?badge={badge}"
             response = requests.get(url)
 
             if response.status_code != 200:
-                raise Exception(
-                    f"unexpected status code {response.status_code} when accessing {url}"
-                )
+                if response.text:
+                    msg = response.text
+                else:
+                    msg = f"unexpected status code {response.status_code} when accessing {url}"
+                raise Exception(msg)
             records = response.json()
             if len(records) == 0:
                 html = "<p><b>No officer found for this name</b></p>"
-            else:
+            elif dataset_select == Datasets.seattle:
                 htmls = []
                 for r in records:
                     context = _augment_with_salary(
@@ -137,7 +147,12 @@ def name_lookup(
                             r.get("unit"),
                         )
                     )
-                    htmls.append(render_template("officer.j2", **context))
+                    htmls.append(render_template("officer_seattle.j2", **context))
+                html = "\n<br/>\n".join(htmls)
+            else:
+                htmls = []
+                for r in records:
+                    htmls.append(render_template("officer_tacoma.j2", **r))
                 html = "\n<br/>\n".join(htmls)
 
         except Exception as err:

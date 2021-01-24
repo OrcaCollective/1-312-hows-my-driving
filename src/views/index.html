@@ -28,15 +28,38 @@
     <p class="bold">{{ title }}</p>
     <p>Wildcards can be used in specified fields. Use _ for single characters or % for multiple characters.</p>
     <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
+    <p><i><b>NOTE:</b> Badge lookup for the Tacoma dataset is not currently available, we will update the underlying data as soon as it is.</i></p>
     <form action="/{{ lookup_url }}" method="GET">
+        {% if dataset_select is defined %}
+        <label for="dataset_select">Select a dataset:
+            <select id="dataset_select" name="dataset_select">
+                <option value="seattle" {{ "selected" if dataset_select != "tacoma" }}>Seattle PD</option>
+                <option value="tacoma" {{ "selected" if dataset_select == "tacoma" }}>Tacoma PD</option>
+            </select>
+        </label>
+        <br/>
+        {% endif %}
         {% if strict_search is defined %}
-        <label>
-            <input type="checkbox" id="strict_search" name="strict_search" value="strict_search" class="checkmark" {{ "checked" if strict_search else "" }}/>
+        <label for="strict_search">
+            <input
+                type="checkbox"
+                id="strict_search"
+                name="strict_search"
+                value="strict_search"
+                class="checkmark"
+                {{ "checked" if strict_search else "" }}
+            />
             Enable strict searching
         </label>
         {% endif %}
         {% for entity in entities %}
-            <input id="{{ entity.query_param }}" class="entity-input" name="{{ entity.query_param }}" placeholder="{{ entity.entity_name_short }}" value="{{ request.args.get(entity.query_param, '') }}">
+            <input
+                id="{{ entity.query_param }}"
+                class="entity-input"
+                name="{{ entity.query_param }}"
+                placeholder="{{ entity.entity_name_short }}"
+                value="{{ request.args.get(entity.query_param, '') }}"
+            />
         {% endfor %}
         <button type="submit">Submit</button>
     </form>
