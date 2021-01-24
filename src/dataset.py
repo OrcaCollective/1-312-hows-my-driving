@@ -1,10 +1,8 @@
 from decimal import Decimal
-from pathlib import Path
 from typing import Dict, Tuple, List, NamedTuple, Generator
 
 from flask import render_template
 from sodapy import Socrata
-import sqlite3
 import requests
 
 
