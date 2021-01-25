@@ -37,6 +37,7 @@ class RosterRecord(NamedTuple):
     last: str
     title: str
     unit: str
+    unit_description: str
 
 
 class Datasets:
@@ -88,6 +89,7 @@ def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
         "title": record.title,
         "unit": record.unit,
         "serial": record.serial,
+        "unit_description": record.unit_description,
     }
 
     results = client.get(
@@ -145,6 +147,7 @@ def name_lookup(
                             r.get("last_name"),
                             r.get("title"),
                             r.get("unit"),
+                            r.get("unit_description"),
                         )
                     )
                     htmls.append(render_template("officer_seattle.j2", **context))
