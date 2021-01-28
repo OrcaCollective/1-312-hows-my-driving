@@ -28,7 +28,9 @@
     <p class="bold">{{ title }}</p>
     <p>Wildcards can be used in specified fields. Use _ for single characters or % for multiple characters.</p>
     <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
-    <p><i><b>NOTE:</b> Badge lookup for the Tacoma dataset is not currently available, we will update the underlying data as soon as it is.</i></p>
+    {% if dataset_select is defined %}
+        <p><i><b>NOTE:</b> Badge lookup for the Tacoma dataset is not currently available, we will update the underlying data as soon as it is.</i></p>
+    {% endif %}
     <form action="/{{ lookup_url }}" method="GET">
         {% if dataset_select is defined %}
         <label for="dataset_select">Select a dataset:
