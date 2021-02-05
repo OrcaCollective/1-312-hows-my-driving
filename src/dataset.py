@@ -160,6 +160,7 @@ def name_lookup(
             else:
                 htmls = []
                 for r in records:
+                    r['date'] = datetime.strptime(r.get("date"), "%Y-%m-%dT%H:%M:%SZ").strftime("%m-%d-%Y")
                     htmls.append(render_template("officer_tacoma.j2", **r))
                 html = "\n<br/>\n".join(htmls)
 
