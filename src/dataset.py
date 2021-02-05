@@ -1,5 +1,6 @@
 from decimal import Decimal
 from typing import Dict, Tuple, List, NamedTuple, Generator
+from datetime import datetime
 
 from flask import render_template
 from sodapy import Socrata
@@ -38,6 +39,7 @@ class RosterRecord(NamedTuple):
     title: str
     unit: str
     unit_description: str
+    date: str
 
 
 class Datasets:
@@ -90,6 +92,7 @@ def _augment_with_salary(record: RosterRecord) -> Dict[str, str]:
         "unit": record.unit,
         "serial": record.serial,
         "unit_description": record.unit_description,
+        "date": record.date
     }
 
     results = client.get(
@@ -139,6 +142,7 @@ def name_lookup(
             elif dataset_select == Datasets.seattle:
                 htmls = []
                 for r in records:
+                    date = datetime.strptime(r.get("date"), "%Y-%m-%dT%H:%M:%SZ")
                     context = _augment_with_salary(
                         RosterRecord(
                             r.get("badge_number"),
@@ -148,6 +152,7 @@ def name_lookup(
                             r.get("title"),
                             r.get("unit"),
                             r.get("unit_description"),
+                            date.strftime("%m-%d-%Y"),
                         )
                     )
                     htmls.append(render_template("officer_seattle.j2", **context))
