@@ -22,17 +22,11 @@ DATASET_CACHE = cachetools.TTLCache(1000, 300)
 
 def get_datasets() -> DatasetMapping:
     if DATASET_CACHE.currsize == 0:
-        log.debug("Refreshing dataset cache")
+        log.info("Refreshing dataset cache")
         datasets: List[DatasetMetadata] = requests.get(
             f"{DATA_API_HOST}/departments"
         ).json()
         for dataset in datasets:
-            # TODO: Remove once API is correct
-            search_routes = dataset["search_routes"]
-            dataset["search_routes"] = {}
-            for route in search_routes:
-                dataset["search_routes"][route["type"]] = route
-
             DATASET_CACHE[dataset["id"]] = dataset
     return DATASET_CACHE
 
