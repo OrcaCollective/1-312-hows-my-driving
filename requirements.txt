@@ -3,3 +3,4 @@ cachetools
 gunicorn
 requests
 sodapy
+typing_extensions
