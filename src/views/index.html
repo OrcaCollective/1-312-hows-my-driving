@@ -28,15 +28,13 @@
     <p class="bold">{{ title }}</p>
     <p>Wildcards can be used in specified fields. Use _ for single characters or % for multiple characters.</p>
     <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
-    {% if dataset_select is defined %}
-        <p><i><b>NOTE:</b> Badge lookup for the Tacoma dataset is not currently available, we will update the underlying data as soon as it is.</i></p>
-    {% endif %}
     <form action="/{{ lookup_url }}" method="GET">
         {% if dataset_select is defined %}
         <label for="dataset_select">Select a dataset:
-            <select id="dataset_select" name="dataset_select">
-                <option value="seattle" {{ "selected" if dataset_select != "tacoma" }}>Seattle PD</option>
-                <option value="tacoma" {{ "selected" if dataset_select == "tacoma" }}>Tacoma PD</option>
+            <select id="dataset_select" name="dataset_select" onchange="this.form.submit();">
+                {% for dataset in datasets %}
+                    <option value="{{ dataset.id }}" {{ "selected" if dataset_select == dataset.id }}>{{ dataset.name }}</option>
+                {% endfor %}
             </select>
         </label>
         <br/>
@@ -59,7 +57,7 @@
                 id="{{ entity.query_param }}"
                 class="entity-input"
                 name="{{ entity.query_param }}"
-                placeholder="{{ entity.entity_name_short }}"
+                placeholder="{{ entity.entity_name }}"
                 value="{{ request.args.get(entity.query_param, '') }}"
             />
         {% endfor %}

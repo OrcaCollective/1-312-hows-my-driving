@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from api_types import DEFAULT_DATASET
 from flask import Flask, render_template, request, redirect, url_for
 
+import api
 import dataset
 
 
@@ -44,11 +46,6 @@ def license_page():
 ################################################################################
 NAME_CONTEXT = {
     "title": "Officer Name Lookup",
-    "entities": [
-        {"entity_name_short": "First Name (wildcard)", "query_param": "first"},
-        {"entity_name_short": "Last Name (wildcard)", "query_param": "last"},
-        {"entity_name_short": "Badge Number", "query_param": "badge"},
-    ],
     "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
     "lookup_url": "name",
 }
@@ -57,22 +54,28 @@ NAME_CONTEXT = {
 @app.route("/name")
 def name_page():
     """Officer name lookup form render"""
-    first_name = request.args.get("first")
-    last_name = request.args.get("last")
-    badge = request.args.get("badge")
-    strict_search = request.args.get("strict_search")
-    dataset_select = request.args.get("dataset_select")
-    html = dataset.name_lookup(
-        first_name,
-        last_name,
-        badge,
-        strict_search,
-        dataset_select,
-    )
+    params = request.args.copy()
+    # Pop the parameters we know will be present
+    strict_search = params.pop("strict_search", False)
+    dataset_select = params.pop("dataset_select", DEFAULT_DATASET)
+    datasets = api.get_datasets()
+    metadata = datasets.get(dataset_select, "")
+    if not metadata:
+        # This shouldn't happen, but return *something* if the dataset is borked.
+        html = f"<p><b>No data for dataset {dataset_select}</b></p>"
+    elif all(val == "" for val in params.values()):
+        # If all parameters are emtpy, it was probably a dataset switch.
+        # Don't call the backend API unless we have something.
+        html = ""
+    else:
+        html = dataset.name_lookup(metadata, **request.args)
+    entities = api.get_query_fields(metadata)
 
     return render_template(
         "index.html",
         **NAME_CONTEXT,
+        datasets=datasets.values(),
+        entities=entities,
         entity_html=html,
         strict_search=strict_search,
         dataset_select=dataset_select,

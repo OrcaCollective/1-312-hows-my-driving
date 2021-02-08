@@ -13,6 +13,7 @@
     "restart": {
       "include": [
         "\\.py$",
+        "\\.j2$",
         "\\.html$",
         "^start\\.sh"
       ]
