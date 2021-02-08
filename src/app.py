@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from extras import DEFAULT_DATASET
 from flask import Flask, render_template, request, redirect, url_for
 
 import api
@@ -54,7 +55,7 @@ NAME_CONTEXT = {
 def name_page():
     """Officer name lookup form render"""
     strict_search = request.args.get("strict_search")
-    dataset_select = request.args.get("dataset_select", "spd")
+    dataset_select = request.args.get("dataset_select", DEFAULT_DATASET)
     datasets = api.get_datasets()
     metadata = datasets.get(dataset_select, "")
     if not metadata:

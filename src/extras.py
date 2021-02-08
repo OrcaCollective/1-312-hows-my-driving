@@ -6,6 +6,9 @@ from soda_api import client, SALARY_DATASET
 from api_types import Record
 
 
+DEFAULT_DATASET = "spd"
+
+
 def _augment_with_salary(record: Record) -> str:
     last = record["last_name"]
     first = record["first_name"]
@@ -23,5 +26,5 @@ def _augment_with_salary(record: Record) -> str:
 
 
 EXTRAS_MAPPING: Dict[str, Callable[[Record], str]] = {
-    "spd": _augment_with_salary,
+    DEFAULT_DATASET: _augment_with_salary,
 }
