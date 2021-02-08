@@ -27,3 +27,6 @@ class Record(TypedDict, total=False):
 class Entity(TypedDict):
     entity_name: str
     query_param: str
+
+
+DEFAULT_DATASET = "spd"

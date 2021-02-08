@@ -3,10 +3,7 @@ from typing import Dict, Callable
 
 from flask import render_template
 from soda_api import client, SALARY_DATASET
-from api_types import Record
-
-
-DEFAULT_DATASET = "spd"
+from api_types import Record, DEFAULT_DATASET
 
 
 def _augment_with_salary(record: Record) -> str:
