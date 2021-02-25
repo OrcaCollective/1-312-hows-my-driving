@@ -43,14 +43,15 @@ def get_results(
     values = []
     for query_param in query_params:
         value = kwargs.get(query_param)
+        if value is None:
+          continue
         values.append(value)
         params.append(f"{query_param}={value}")
     url += "&".join(params)
+    print(url)
 
-    if all(value is None for value in values):
+    if not values or all(value is None for value in values):
         return None
-
-    log.info(f"Querying URL: {url}")
 
     response = requests.get(url)
     if response.status_code != 200:
