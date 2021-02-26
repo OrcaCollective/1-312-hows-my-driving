@@ -26,8 +26,12 @@
         </form>
     </div>
     <p class="bold">{{ title }}</p>
+    {% if dataset_select is not defined %}
     <p>Wildcards can be used in specified fields. Use _ for single characters or % for multiple characters.</p>
     <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
+    {% else %}
+    <p><i><u>Note:</u> Strict searching must be checked for searches using non-fuzzy fields (e.g. Badge)</i></p>
+    {% endif %}
     <form action="/{{ lookup_url }}" method="GET">
         {% if dataset_select is defined %}
         <label for="dataset_select">Select a dataset:
