@@ -44,7 +44,7 @@ def get_results(
     for query_param in query_params:
         value = kwargs.get(query_param)
         if value is None:
-          continue
+            continue
         values.append(value)
         params.append(f"{query_param}={value}")
     url += "&".join(params)
