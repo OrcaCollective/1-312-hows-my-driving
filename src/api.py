@@ -72,7 +72,7 @@ def get_query_fields(metadata: DatasetMetadata) -> List[Entity]:
     # Remove fuzzy params from exact ones
     exact_params -= fuzzy_params
     entities: List[Entity] = []
-    for param in sorted([*fuzzy_params, *exact_params]):
+    for param in [*sorted(exact_params), *sorted(fuzzy_params)]:
         name = "Name Unknown"
         for field in fields:
             if param == field["FieldName"]:
