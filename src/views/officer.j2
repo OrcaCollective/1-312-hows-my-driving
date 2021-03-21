@@ -1,5 +1,6 @@
 {% for field in metadata.fields %}
-<p><b>{{ field.Label }}:</b> {{ record.get(field.FieldName) }}</p>
+{% set value = record.get(field.FieldName) %}
+<p><b>{{ field.Label }}:</b> {{ value if value }}</p>
 {% endfor %}
 {{ extras }}
 <p><i>*Record Source Roster Date: {{ metadata.last_available_roster_date }}</i></p>
