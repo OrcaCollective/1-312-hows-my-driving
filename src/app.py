@@ -24,7 +24,9 @@ def home():
 ################################################################################
 LICENSE_CONTEXT = {
     "title": "Seattle Public Vehicle Lookup",
-    "entities": [{"entity_name": "License (wildcard)", "query_param": "license"}],
+    "entities": [
+        {"entity_name": "License (wildcard)", "query_param": "license", "fuzzy": False}
+    ],
     "data_source": "https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb",
     "lookup_url": "license",
 }

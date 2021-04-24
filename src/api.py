@@ -74,13 +74,14 @@ def get_query_fields(metadata: DatasetMetadata) -> List[Entity]:
     entities: List[Entity] = []
     for param in [*sorted(exact_params), *sorted(fuzzy_params)]:
         name = "Name Unknown"
+        fuzzy = False
         for field in fields:
             if param == field["FieldName"]:
                 name = field["Label"]
                 break
         if param in fuzzy_params:
-            name += " (fuzzy)"
-        entities.append({"entity_name": name, "query_param": param})
+            fuzzy = True
+        entities.append({"entity_name": name, "query_param": param, "fuzzy": fuzzy})
     return entities
 
 

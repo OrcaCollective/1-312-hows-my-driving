@@ -1,6 +1,7 @@
 import sys
 
 from typing import List, Dict
+
 if sys.version_info >= (3, 8):
     from typing import TypedDict
 else:
@@ -33,6 +34,7 @@ class Record(TypedDict, total=False):
 class Entity(TypedDict):
     entity_name: str
     query_param: str
+    fuzzy: bool
 
 
 DEFAULT_DATASET = "spd"
