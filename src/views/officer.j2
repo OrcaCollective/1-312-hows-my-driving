@@ -1,5 +1,5 @@
 {% for field in metadata.fields %}
-{% set value = record.get(field.FieldName) %}
+{% set value = record.get(field.FieldName) | string %}
     {% if value and value.startswith("http") %}
     <p><b>{{ field.Label }}:</b> <a href="{{ value }}" target="_blank">{{ value }}</a></p>
     {% else %}
@@ -7,4 +7,4 @@
     {% endif %}
 {% endfor %}
 {{ extras }}
-<p><i>*Record Source Roster Date: {{ metadata.last_available_roster_date }}</i></p>
+<p><i>*Most recent roster date available: {{ metadata.last_available_roster_date }}</i></p>
