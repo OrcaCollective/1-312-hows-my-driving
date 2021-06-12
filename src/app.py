@@ -75,11 +75,15 @@ def name_page():
         html = dataset.name_lookup(metadata, **request.args)
     entities = api.get_query_fields(metadata)
 
+    strict_entities = [entity for entity in entities if not entity["is_fuzzy"]]
+
     return render_template(
         "index.html",
         **NAME_CONTEXT,
         datasets=datasets.values(),
         entities=entities,
+        strict_entities=strict_entities,
+        allow_strict_search=len(strict_entities) != 0,
         entity_html=html,
         strict_search=strict_search,
         dataset_select=dataset_select,

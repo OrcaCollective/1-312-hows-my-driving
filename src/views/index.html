@@ -29,8 +29,15 @@
     {% if dataset_select is not defined %}
     <p>Wildcards can be used in specified fields. Use _ for single characters or % for multiple characters.</p>
     <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
-    {% else %}
-    <p><i><u>Note:</u> Strict searching must be checked for searches using non-fuzzy fields (e.g. Badge)</i></p>
+    {% elif allow_strict_search %}
+    <p>
+        <i>
+            <u>Note:</u>
+            Strict searching must be checked for searches using non-fuzzy fields
+            {# put this all on one line to avoid adding extra spaces :( #}
+            ({% for entity in strict_entities %}{{ entity.entity_name }}{% if not loop.last %}, {% else %}){% endif %}{% endfor %}
+        </i>
+    </p>
     {% endif %}
     <form action="/{{ lookup_url }}" method="GET">
         {% if dataset_select is defined %}
@@ -43,7 +50,7 @@
         </label>
         <br/>
         {% endif %}
-        {% if strict_search is defined %}
+        {% if allow_strict_search %}
         <label for="strict_search">
             <input
                 type="checkbox"
