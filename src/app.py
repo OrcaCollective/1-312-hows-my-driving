@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from api_types import DEFAULT_DATASET
 from flask import Flask, render_template, request, redirect, url_for
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sodapy import Socrata  # type: ignore
 
 client = Socrata("data.seattle.gov", None)
