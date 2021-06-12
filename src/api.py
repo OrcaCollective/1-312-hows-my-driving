@@ -92,7 +92,7 @@ def render_officers(records: Optional[List[Record]], metadata: DatasetMetadata) 
     if records is None:
         return ""
     if len(records) == 0:
-        return "<p><b>No officers found for this name</b></p>"
+        return "<p><b>No officers found</b></p>"
     htmls = []
     for record in records:
         extras = ""
