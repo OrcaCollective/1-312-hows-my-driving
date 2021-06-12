@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from decimal import Decimal
 from functools import lru_cache
 from typing import Dict, Callable, Optional
@@ -8,9 +9,7 @@ from api_types import Record, DEFAULT_DATASET
 
 
 @lru_cache(maxsize=1000)
-def _augment_with_salary_cached(
-    last: Optional[str], first: Optional[str]
-) -> Optional[str]:
+def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> Optional[str]:
     """Cached augmentation for faster retrieval."""
     results = client.get(
         SALARY_DATASET,
