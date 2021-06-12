@@ -13,7 +13,9 @@ log = logging.getLogger(__name__)
 def license_lookup(license: str) -> str:
     if license:
         try:
-            results = client.get(LICENSE_DATASET, limit=1, where=f"license like '{license.upper()}'")
+            results = client.get(
+                LICENSE_DATASET, limit=1, where=f"license like '{license.upper()}'"
+            )
             if not results:
                 html = (
                     # Disable reason: No need to fix line length for strings
