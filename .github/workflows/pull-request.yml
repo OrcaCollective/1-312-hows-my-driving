@@ -1,0 +1,18 @@
+name: Lint and Test
+
+on: pull_request
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        # need to install all dependencies for mypy so that we have all the type stubs
+        run: pip install -r requirements-dev.txt
+      - name: Run pre-commit checks
+        run: pre-commit run --all-files

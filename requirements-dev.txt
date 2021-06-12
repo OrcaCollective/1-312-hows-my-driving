@@ -1,0 +1,11 @@
+-r requirements.txt
+pre-commit==2.13.0
+flake8==3.9.2
+black==21.6b0
+mypy==0.902
+types-cachetools==0.1.6
+types-cryptography==3.3.0
+types-enum34==0.1.5
+types-ipaddress==0.1.2
+types-pkg-resources==0.1.2
+types-requests==0.1.10

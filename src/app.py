@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from api_types import DEFAULT_DATASET
 from flask import Flask, render_template, request, redirect, url_for
 
@@ -24,7 +23,12 @@ def home():
 ################################################################################
 LICENSE_CONTEXT = {
     "title": "Seattle Public Vehicle Lookup",
-    "entities": [{"entity_name": "License (wildcard)", "query_param": "license"}],
+    "entities": [
+        {
+            "entity_name": "License (wildcard)",
+            "query_param": "license",
+        }
+    ],
     "data_source": "https://data.seattle.gov/City-Business/Active-Fleet-Complement/enxu-fgzb",
     "lookup_url": "license",
 }

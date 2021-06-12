@@ -18,6 +18,7 @@ def license_lookup(license: str) -> str:
             )
             if not results:
                 html = (
+                    # Disable reason: No need to fix line length for strings
                     "<p><b>No vehicle found for this license in public dataset</b>"
                     "</p><p>(not all undercover vehicles have available information)</p>"
                 )
