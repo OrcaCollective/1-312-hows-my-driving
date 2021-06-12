@@ -29,7 +29,7 @@
     {% if dataset_select is not defined %}
     <p>Wildcards can be used in specified fields. Use _ for single characters or % for multiple characters.</p>
     <p><i>E.g. ("Miss_ng" will find "Missing", "Miss%" will find "Missing")</i></p>
-    {% elif allow_strict_search %}
+    {% elif strict_entities %}
     <p>
         <i>
             <u>Note:</u>
@@ -53,7 +53,7 @@
         </label>
         <br/>
         {% endif %}
-        {% if allow_strict_search %}
+        {% if strict_search is defined %}
         <label for="strict_search">
             <input
                 type="checkbox"
