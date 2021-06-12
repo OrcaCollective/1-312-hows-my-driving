@@ -35,4 +35,7 @@ repos:
     rev: v0.902
     hooks:
         - id: mypy
-          additional_dependencies: [Flask==2.0.1, types-cachetools==0.1.6, types-requests==0.1.10]
+          additional_dependencies: 
+            - Flask==2.0.1
+            - types-cachetools==0.1.6
+            - types-requests==0.1.10
