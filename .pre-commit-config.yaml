@@ -33,4 +33,5 @@ repos:
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.902
     hooks:
-    -   id: mypy
+        - id: mypy
+          additional_dependencies: [Flask==2.0.1, types-cachetools==0.1.6, types-requests==0.1.10]
