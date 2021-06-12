@@ -18,7 +18,7 @@ DATA_API_HOST = "https://1312api.tech-bloc-sea.dev"
 
 # Cache
 DatasetMapping = Mapping[str, DatasetMetadata]
-DATASET_CACHE = cachetools.TTLCache(1000, 300)
+DATASET_CACHE: cachetools.TTLCache = cachetools.TTLCache(1000, 300)
 
 
 def get_datasets() -> DatasetMapping:

@@ -9,7 +9,7 @@ from api_types import Record, DEFAULT_DATASET
 
 
 @lru_cache(maxsize=1000)
-def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> Optional[str]:
+def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> str:
     """Cached augmentation for faster retrieval."""
     results = client.get(
         SALARY_DATASET,
@@ -25,7 +25,7 @@ def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> Op
     return render_template("seattle_extras.j2", **context)
 
 
-def augment_with_salary(record: Record) -> Optional[str]:
+def augment_with_salary(record: Record) -> str:
     last = record["last_name"]
     first = record["first_name"]
     return _augment_with_salary_cached(last, first)
