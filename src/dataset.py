@@ -1,4 +1,5 @@
 import logging
+import typing
 
 from flask import render_template
 
@@ -39,9 +40,20 @@ def license_lookup(license: str) -> str:
 
 def name_lookup(
     metadata: api_types.DatasetMetadata,
-    strict_search: bool = False,
+    entities: typing.List[api_types.Entity],
+    strict_search: bool = None,
     **kwargs,
-) -> str:
+) -> typing.Tuple[str, bool]:
+    if strict_search is None:
+        strict_search = True
+        for fuzzy_entity in [entity for entity in entities if entity["is_fuzzy"]]:
+            if (
+                fuzzy_entity["query_param"] in kwargs
+                and kwargs[fuzzy_entity["query_param"]] != ""
+            ):
+                strict_search = False
+                break
+
     try:
         records = api.get_results(metadata, strict_search, **kwargs)
         html = api.render_officers(records, metadata)
@@ -50,4 +62,4 @@ def name_lookup(
         html = f"<p><b>Error:</b> {err}"
 
     log.info("Final HTML:\n{}".format(html))
-    return html
+    return html, strict_search

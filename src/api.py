@@ -64,7 +64,10 @@ def get_results(
     return records
 
 
-def get_query_fields(metadata: DatasetMetadata) -> List[Entity]:
+def get_query_fields(metadata: Optional[DatasetMetadata]) -> List[Entity]:
+    if metadata is None:
+        return []
+
     search_routes = metadata["search_routes"]
     fields = metadata["fields"]
     exact_params = set(search_routes["exact"]["query_params"])
