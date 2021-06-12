@@ -14,7 +14,8 @@ repos:
         - id: check-symlinks
         - id: mixed-line-ending
         - id: pretty-format-json
-          args: [--autofix]
+          args: 
+            - --autofix
 
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.9.2
