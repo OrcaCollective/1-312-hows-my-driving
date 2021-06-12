@@ -1,4 +1,5 @@
 import logging
+import typing
 
 from flask import render_template
 
@@ -39,7 +40,7 @@ def license_lookup(license: str) -> str:
 
 def name_lookup(
     metadata: api_types.DatasetMetadata,
-    entities: list[api_types.Entity],
+    entities: typing.List[api_types.Entity],
     strict_search: bool = None,
     **kwargs,
 ) -> str:
