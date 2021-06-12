@@ -60,11 +60,11 @@ def name_page():
     """Officer name lookup form render"""
     params = request.args.copy()
     # Pop the parameters we know will be present
-    strict_search = params.pop("strict_search", False)
+    strict_search = False
     dataset_select = params.pop("dataset_select", DEFAULT_DATASET)
     datasets = api.get_datasets()
     metadata = datasets.get(dataset_select, "")
-    entities = None
+    entities = api.get_query_fields(metadata)
     if not metadata:
         # This shouldn't happen, but return *something* if the dataset is borked.
         html = f"<p><b>No data for dataset {dataset_select}</b></p>"
@@ -73,11 +73,7 @@ def name_page():
         # Don't call the backend API unless we have something.
         html = ""
     else:
-        entities = api.get_query_fields(metadata)
-        html = dataset.name_lookup(metadata, entities, **request.args)
-
-    if entities is None:
-        entities = api.get_query_fields(metadata)
+        html, strict_search = dataset.name_lookup(metadata, entities, **request.args)
 
     return render_template(
         "index.html",

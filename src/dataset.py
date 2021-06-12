@@ -43,7 +43,7 @@ def name_lookup(
     entities: typing.List[api_types.Entity],
     strict_search: bool = None,
     **kwargs,
-) -> str:
+) -> typing.Tuple[str, bool]:
     if strict_search is None:
         strict_search = True
         for fuzzy_entity in [entity for entity in entities if entity["is_fuzzy"]]:
@@ -62,4 +62,4 @@ def name_lookup(
         html = f"<p><b>Error:</b> {err}"
 
     log.info("Final HTML:\n{}".format(html))
-    return html
+    return html, strict_search
