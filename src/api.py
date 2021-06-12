@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 from typing import List, Mapping, Optional
 
@@ -23,17 +24,13 @@ DATASET_CACHE = cachetools.TTLCache(1000, 300)
 def get_datasets() -> DatasetMapping:
     if DATASET_CACHE.currsize == 0:
         log.info("Refreshing dataset cache")
-        datasets: List[DatasetMetadata] = requests.get(
-            f"{DATA_API_HOST}/departments"
-        ).json()
+        datasets: List[DatasetMetadata] = requests.get(f"{DATA_API_HOST}/departments").json()
         for dataset in datasets:
             DATASET_CACHE[dataset["id"]] = dataset
     return DATASET_CACHE
 
 
-def get_results(
-    metadata: DatasetMetadata, strict_search: bool, **kwargs
-) -> Optional[List[Record]]:
+def get_results(metadata: DatasetMetadata, strict_search: bool, **kwargs) -> Optional[List[Record]]:
     route_key = "exact" if strict_search else "fuzzy"
     route = metadata["search_routes"][route_key]
     search_path = route["path"]

@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import sys
 
 from typing import List, Dict
+
 if sys.version_info >= (3, 8):
     from typing import TypedDict
 else:

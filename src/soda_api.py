@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from sodapy import Socrata
 
 client = Socrata("data.seattle.gov", None)
