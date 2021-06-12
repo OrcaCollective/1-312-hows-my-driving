@@ -39,6 +39,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Install Dependencies
-        run: pip install mypy
+        # need to install all dependencies for mypy so that we have all the type stubs
+        run: pip install -r requirements.txt -r requirements-dev.txt
       - name: Check typing with mypy
         run: mypy .
