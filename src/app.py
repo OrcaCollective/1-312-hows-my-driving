@@ -80,6 +80,7 @@ def name_page():
         **NAME_CONTEXT,
         datasets=datasets.values(),
         entities=entities,
+        strict_entities=[entity for entity in entities if not entity["is_fuzzy"]],
         entity_html=html,
         strict_search=strict_search,
         dataset_select=dataset_select,

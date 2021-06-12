@@ -34,6 +34,7 @@ class Record(TypedDict, total=False):
 class Entity(TypedDict):
     entity_name: str
     query_param: str
+    is_fuzzy: bool
 
 
 DEFAULT_DATASET = "spd"
