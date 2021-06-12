@@ -64,6 +64,7 @@ def name_page():
     dataset_select = params.pop("dataset_select", DEFAULT_DATASET)
     datasets = api.get_datasets()
     metadata = datasets.get(dataset_select, "")
+    entities = None
     if not metadata:
         # This shouldn't happen, but return *something* if the dataset is borked.
         html = f"<p><b>No data for dataset {dataset_select}</b></p>"
@@ -72,8 +73,11 @@ def name_page():
         # Don't call the backend API unless we have something.
         html = ""
     else:
-        html = dataset.name_lookup(metadata, **request.args)
-    entities = api.get_query_fields(metadata)
+        entities = api.get_query_fields(metadata)
+        html = dataset.name_lookup(metadata, entities, **request.args)
+
+    if entities is None:
+        entities = api.get_query_fields(metadata)
 
     return render_template(
         "index.html",

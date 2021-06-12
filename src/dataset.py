@@ -39,9 +39,20 @@ def license_lookup(license: str) -> str:
 
 def name_lookup(
     metadata: api_types.DatasetMetadata,
-    strict_search: bool = False,
+    entities: list[api_types.Entity],
+    strict_search: bool = None,
     **kwargs,
 ) -> str:
+    if strict_search is None:
+        strict_search = True
+        for fuzzy_entity in [entity for entity in entities if entity["is_fuzzy"]]:
+            if (
+                fuzzy_entity["query_param"] in kwargs
+                and kwargs[fuzzy_entity["query_param"]] != ""
+            ):
+                strict_search = False
+                break
+
     try:
         records = api.get_results(metadata, strict_search, **kwargs)
         html = api.render_officers(records, metadata)
