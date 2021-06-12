@@ -82,7 +82,9 @@ def get_query_fields(metadata: DatasetMetadata) -> List[Entity]:
         if param in fuzzy_params:
             is_fuzzy = True
             name += " (fuzzy)"
-        entities.append({"entity_name": name, "query_param": param, "is_fuzzy": is_fuzzy})
+        entities.append(
+            {"entity_name": name, "query_param": param, "is_fuzzy": is_fuzzy}
+        )
     return entities
 
 
