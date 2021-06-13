@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+	<h2>Historical view for badge #{{ badge }}</h2>
+	{{ entity_html | safe }}
+</main>
+{% endblock %}

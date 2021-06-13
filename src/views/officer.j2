@@ -8,6 +8,6 @@
 {% endfor %}
 {{ extras }}
 {% if historical_available %}
-    <p>A historical view of this officer's records is <a href="/historical-officers?badge={{record.get('badge')}} ">available here</a>.</p>
+    <p>A historical view of this officer's records is <a href="/historical-officers/{{record.get('badge')}} ">available here</a>.</p>
 {% endif %}
 <p><i>*Most recent roster date available: {{ metadata.last_available_roster_date }}</i></p>
