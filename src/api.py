@@ -32,9 +32,13 @@ def get_datasets() -> DatasetMapping:
 
 
 def get_results(
-    metadata: DatasetMetadata, strict_search: bool, **kwargs
+    metadata: DatasetMetadata, strict_search: bool, historical: bool = False, **kwargs
 ) -> Optional[List[Record]]:
-    route_key = "exact" if strict_search else "fuzzy"
+    route_key = "fuzzy"
+    if historical:
+        route_key = "historical-exact"
+    elif strict_search:
+        route_key = "exact"
     route = metadata["search_routes"][route_key]
     search_path = route["path"]
     query_params = route["query_params"]
@@ -91,7 +95,9 @@ def get_query_fields(metadata: Optional[DatasetMetadata]) -> List[Entity]:
     return entities
 
 
-def render_officers(records: Optional[List[Record]], metadata: DatasetMetadata) -> str:
+def render_officers(
+    records: Optional[List[Record]], metadata: DatasetMetadata, historical: bool
+) -> str:
     if records is None:
         return ""
     if len(records) == 0:
@@ -107,6 +113,8 @@ def render_officers(records: Optional[List[Record]], metadata: DatasetMetadata) 
                 record=record,
                 metadata=metadata,
                 extras=extras,
+                historical_available=not historical
+                and "historical-exact" in metadata["search_routes"],
             )
         )
     html = "\n<br/>\n".join(htmls)

@@ -88,6 +88,49 @@ def name_page():
 
 
 ################################################################################
+# Historical
+################################################################################
+HISTORICAL_CONTEXT = {
+    "title": "Historical Officer Name Lookup",
+    "entities": [
+        {
+            "entity_name": "Badge",
+            "query_param": "badge",
+        },
+    ],
+    "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
+    "lookup_url": "historical-officers",
+}
+
+
+@app.route("/historical-officers")
+def historical_page():
+    """Historical officer name lookup form render"""
+    params = request.args.copy()
+    datasets = api.get_datasets()
+    metadata = datasets.get("spd", "")
+    if not metadata:
+        # This shouldn't happen, but return *something* if the dataset is borked.
+        html = "<p><b>No data for dataset historical SPD</b></p>"
+    elif all(val == "" for val in params.values()):
+        # If all parameters are emtpy, it was probably a dataset switch.
+        # Don't call the backend API unless we have something.
+        html = ""
+    else:
+        # throw away the strict_search value as historical search is always strict
+        html, _ = dataset.name_lookup(
+            metadata, entities=[], historical=True, **request.args
+        )
+
+    return render_template(
+        "index.html",
+        **HISTORICAL_CONTEXT,
+        datasets=datasets.values(),
+        entity_html=html,
+    )
+
+
+################################################################################
 # Old compatibility endpoints
 ################################################################################
 @app.route("/license-lookup/<license>")
