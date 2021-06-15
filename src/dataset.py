@@ -42,6 +42,7 @@ def name_lookup(
     metadata: api_types.DatasetMetadata,
     entities: typing.List[api_types.Entity],
     strict_search: bool = None,
+    historical: bool = False,
     **kwargs,
 ) -> typing.Tuple[str, bool]:
     if strict_search is None:
@@ -55,8 +56,8 @@ def name_lookup(
                 break
 
     try:
-        records = api.get_results(metadata, strict_search, **kwargs)
-        html = api.render_officers(records, metadata)
+        records = api.get_results(metadata, strict_search, historical, **kwargs)
+        html = api.render_officers(records, metadata, historical)
     except Exception as err:
         log.exception(err)
         html = f"<p><b>Error:</b> {err}"

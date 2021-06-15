@@ -88,6 +88,36 @@ def name_page():
 
 
 ################################################################################
+# Historical
+################################################################################
+HISTORICAL_CONTEXT = {
+    "data_source": "https://data.seattle.gov/City-Business/City-of-Seattle-Wage-Data/2khk-5ukd",
+}
+
+
+@app.route("/historical-officers/<badge>")
+def historical_page(badge):
+    """Historical officer name lookup form render"""
+    datasets = api.get_datasets()
+    metadata = datasets.get("spd", "")
+    if not metadata:
+        # This shouldn't happen, but return *something* if the dataset is borked.
+        html = "<p><b>No data for dataset historical SPD</b></p>"
+    else:
+        # throw away the strict_search value as historical search is always strict
+        html, _ = dataset.name_lookup(
+            metadata, entities=[], historical=True, badge=badge
+        )
+
+    return render_template(
+        "historical.html",
+        **HISTORICAL_CONTEXT,
+        entity_html=html,
+        badge=badge,
+    )
+
+
+################################################################################
 # Old compatibility endpoints
 ################################################################################
 @app.route("/license-lookup/<license>")
