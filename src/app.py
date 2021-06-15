@@ -4,9 +4,13 @@ from flask import Flask, render_template, request, redirect, url_for
 
 import api
 import dataset
+import filters
 
 
 app = Flask(__name__, static_folder="public", template_folder="views")
+
+
+app.jinja_env.filters["diff_classname"] = filters.diff_classname_filter
 
 
 ################################################################################

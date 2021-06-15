@@ -95,9 +95,7 @@ def get_query_fields(metadata: Optional[DatasetMetadata]) -> List[Entity]:
     return entities
 
 
-def render_officers(
-    records: Optional[List[Record]], metadata: DatasetMetadata, historical: bool
-) -> str:
+def render_officers(records: Optional[List[Record]], metadata: DatasetMetadata) -> str:
     if records is None:
         return ""
     if len(records) == 0:
@@ -113,10 +111,24 @@ def render_officers(
                 record=record,
                 metadata=metadata,
                 extras=extras,
-                historical_available=not historical
-                and "historical-exact" in metadata["search_routes"],
+                historical_available="historical-exact" in metadata["search_routes"],
             )
         )
     html = "\n<br/>\n".join(htmls)
     log.debug(f"Final HTML: {html}")
     return html
+
+
+def render_historical_officers(
+    records: Optional[List[Record]], metadata: DatasetMetadata
+) -> str:
+    if records is None:
+        return ""
+    if len(records) == 0:
+        return "<p><b>No historical record found for this badge</b></p>"
+
+    return render_template(
+        "officer-table.j2",
+        records=records,
+        metadata=metadata,
+    )

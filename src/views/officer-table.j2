@@ -1,0 +1,28 @@
+<table>
+    <thead>
+        <tr>
+            {% for field in metadata.fields %}
+                <th>{{ field.Label }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for record in records %}
+            {# records are ordered by date, starting with the present into the past, so the "previous" record will be the next item in the list of records #}
+            {% set previous_record = loop.nextitem %}
+            <tr>
+                {% for field in metadata.fields %}
+                    <td class="{{ record | diff_classname(previous_record, field) }}">
+                        {% set value = record.get(field.FieldName) | string %}
+                        {% if value and value.startswith("http") %}
+                            <a href="{{ value }}" target="_blank" rel="noopener noreferrer">{{ value }}</a>
+                        {% else %}
+                            {{ value }}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
