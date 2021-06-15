@@ -13,8 +13,7 @@
 			{% set previous_record = loop.nextitem %}
 			<tr>
 				{% for field in metadata.fields %}
-					{% set classname = record | diff_classname(previous_record, field) %}
-					<td class="{{ classname }}">
+					<td class="{{ record | diff_classname(previous_record, field) }}">
 						{% set value = record.get(field.FieldName) | string %}
 						{% if value and value.startswith("http") %}
 							<a href="{{ value }}" target="_blank" rel="noopener noreferrer">{{ value }}</a>
