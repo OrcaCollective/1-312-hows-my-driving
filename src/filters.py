@@ -1,7 +1,7 @@
 from api_types import Record, FieldMetadata
 
 
-FIELDS_TO_SKIP = ["date"]
+FIELDS_TO_SKIP = {"date"}
 
 
 def diff_classname_filter(
