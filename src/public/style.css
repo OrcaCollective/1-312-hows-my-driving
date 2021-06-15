@@ -89,3 +89,26 @@ footer > a {
 .nicejob {
   text-decoration: line-through;
 }
+
+table {
+  overflow-y: scroll;
+  white-space: nowrap;
+}
+
+thead {
+  background-color: lightgray;
+}
+
+thead th {
+  text-align: left;
+  padding: 0.5em 1em;
+}
+
+tbody td {
+  text-align: left;
+  padding: 0.5em 1em;
+}
+
+.has_diff {
+  background-color: yellow;
+}

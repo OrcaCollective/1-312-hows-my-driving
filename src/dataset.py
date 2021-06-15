@@ -57,7 +57,11 @@ def name_lookup(
 
     try:
         records = api.get_results(metadata, strict_search, historical, **kwargs)
-        html = api.render_officers(records, metadata, historical)
+        html = (
+            api.render_historical_officers(records, metadata)
+            if historical
+            else api.render_officers(records, metadata)
+        )
     except Exception as err:
         log.exception(err)
         html = f"<p><b>Error:</b> {err}"
