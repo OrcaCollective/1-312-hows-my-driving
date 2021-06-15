@@ -18,7 +18,7 @@
                         {% if value and value.startswith("http") %}
                             <a href="{{ value }}" target="_blank" rel="noopener noreferrer">{{ value }}</a>
                         {% else %}
-                            {{ value if value }}
+                            {{ value }}
                         {% endif %}
                     </td>
                 {% endfor %}
