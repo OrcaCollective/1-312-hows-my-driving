@@ -119,6 +119,13 @@ def render_officers(records: Optional[List[Record]], metadata: DatasetMetadata) 
     return html
 
 
+FIELDS_NOT_TO_RENDER = {
+    "first_name",
+    "middle_name",
+    "last_name",
+}
+
+
 def render_historical_officers(
     records: Optional[List[Record]], metadata: DatasetMetadata
 ) -> str:
@@ -130,5 +137,9 @@ def render_historical_officers(
     return render_template(
         "officer-table.j2",
         records=records,
-        metadata=metadata,
+        fields=[
+            field
+            for field in metadata["fields"]
+            if field["FieldName"] not in FIELDS_NOT_TO_RENDER
+        ],
     )
