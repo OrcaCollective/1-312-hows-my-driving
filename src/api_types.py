@@ -29,6 +29,7 @@ class DatasetMetadata(TypedDict):
 class Record(TypedDict, total=False):
     first_name: str
     last_name: str
+    is_current: bool
 
 
 class Entity(TypedDict):

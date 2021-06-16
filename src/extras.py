@@ -25,6 +25,9 @@ def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> st
 
 
 def augment_with_salary(record: Record) -> str:
+    if not record["is_current"]:
+        return ""
+
     last = record["last_name"]
     first = record["first_name"]
     return _augment_with_salary_cached(last, first)
