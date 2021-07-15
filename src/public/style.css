@@ -68,8 +68,12 @@ button:active {
   box-shadow: none;
 }
 
+fieldset {
+  border: 2px solid #333138;
+}
+
 label {
-  color: #666666;
+  color: #333138;
 }
 
 li {

@@ -75,7 +75,6 @@
                     class="entity-input"
                     type="text"
                     name="{{ entity.query_param }}"
-                    aria-label="{{ entity.entity_name }}"
                     value="{{ request.args.get(entity.query_param, '') }}"
                 />
             </label>
