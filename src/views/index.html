@@ -29,37 +29,60 @@
     {% endif %}
     <form action="/{{ lookup_url }}" method="GET">
         {% if dataset_select is defined %}
-        <label for="dataset_select">Select a dataset:
-            <select id="dataset_select" name="dataset_select" onchange="this.form.submit();">
-                {% for dataset in datasets %}
-                    <option value="{{ dataset.id }}" {{ "selected" if dataset_select == dataset.id }}>{{ dataset.name }}</option>
-                {% endfor %}
-            </select>
-        </label>
+        <fieldset>
+            <legend>City Database</legend>
+            <label for="dataset_select">Select a dataset:
+                <select id="dataset_select" name="dataset_select" onchange="this.form.submit();">
+                    {% for dataset in datasets %}
+                        <option value="{{ dataset.id }}" {{ "selected" if dataset_select == dataset.id }}>{{ dataset.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </fieldset>
+
         <br/>
         {% endif %}
         {% if strict_search is defined %}
-        <label for="strict_search">
-            <input
-                type="checkbox"
-                id="strict_search"
-                name="strict_search"
-                value="strict_search"
-                class="checkmark"
-                {{ "checked" if strict_search else "" }}
-            />
-            Enable strict searching
-        </label>
+        <fieldset>
+            <legend>
+                Strict searching
+            </legend>
+
+            <label for="strict_search">
+                <input
+                    type="checkbox"
+                    id="strict_search"
+                    name="strict_search"
+                    value="strict_search"
+                    class="checkmark"
+                    {{ "checked" if strict_search else "" }}
+                />
+                Enable strict searching
+            </label>
+        </fieldset>
         {% endif %}
-        {% for entity in entities %}
-            <input
-                id="{{ entity.query_param }}"
-                class="entity-input"
-                name="{{ entity.query_param }}"
-                placeholder="{{ entity.entity_name }}"
-                value="{{ request.args.get(entity.query_param, '') }}"
-            />
-        {% endfor %}
+        <br />
+        <fieldset>
+            <legend>
+                Search Information
+            </legend>
+
+            {% for entity in entities %}
+            <label for="{{ entity.query_param }}">
+                {{ entity.entity_name }}
+                <input
+                    id="{{ entity.query_param }}"
+                    class="entity-input"
+                    type="text"
+                    name="{{ entity.query_param }}"
+                    aria-label="{{ entity.entity_name }}"
+                    value="{{ request.args.get(entity.query_param, '') }}"
+                />
+            </label>
+            {% endfor %}
+        </fieldset>
+
+        <br />
         <button type="submit">Submit</button>
     </form>
     <section class="dreams">
