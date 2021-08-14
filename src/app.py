@@ -19,7 +19,7 @@ app.jinja_env.filters["diff_classname"] = filters.diff_classname_filter
 @app.route("/")
 def home():
     """Reroute home URL to license lookup form"""
-    return redirect(url_for("license_page"))
+    return redirect(url_for("name_page"))
 
 
 ################################################################################
