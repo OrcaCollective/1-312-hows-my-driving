@@ -1,17 +1,26 @@
 import csv
+import io
+import logging
 from decimal import Decimal
 from functools import lru_cache
-from pathlib import Path
-from typing import Dict, Callable, Optional
+from typing import Dict, Callable, Optional, Mapping
 
+import cachetools
+import requests
 from flask import render_template
 from soda_api import client, SALARY_DATASET
 from api_types import Record, DEFAULT_DATASET
 
 
-OO_ID_MAPPING = {}
-OO_URL = "https://spd.watch/officer/{id_}"
-OO_MAPPING_PATH = Path(__file__).parent / "data" / "badge-oo-id-mapping.csv"
+log = logging.getLogger(__name__)
+
+
+OO_ID_MAPPING: Dict[str, str] = {}
+OO_ID_SOURCE_URL = (
+    "https://openoversight.tech-bloc-sea.dev/download/department/1/officers"
+)
+OO_URL_TEMPLATE = "https://spd.watch/officer/{id_}"
+OO_CACHE: cachetools.TTLCache = cachetools.TTLCache(maxsize=10_000, ttl=3600 * 24)
 
 
 ########################################################################################
@@ -46,20 +55,21 @@ def augment_with_salary(record: Record) -> str:
 ########################################################################################
 # OpenOversight ID mapping
 ########################################################################################
-def _load_oo_id_mapping() -> None:
-    with OO_MAPPING_PATH.open(newline="") as csvfile:
-        reader = csv.DictReader(csvfile)
-        # Do this rather than a dict comprehension so we populate the global object
+def _get_oo_id_mapping() -> Mapping[str, str]:
+    if OO_CACHE.currsize == 0:
+        log.info("Refreshing OO ID cache")
+        response = requests.get(OO_ID_SOURCE_URL)
+        reader = csv.DictReader(io.StringIO(response.text, newline=""))
         for row in reader:
-            OO_ID_MAPPING[row["badge number"]] = row["id"]
+            OO_CACHE[row["badge number"]] = row["id"]
+    return OO_CACHE
 
 
 def augment_with_oo_link(record: Record) -> str:
-    if not OO_ID_MAPPING:
-        _load_oo_id_mapping()
-    if oo_id := OO_ID_MAPPING.get(record["badge"]):  # type: ignore
-        oo_link = OO_URL.format(id_=oo_id)
-        return render_template("extras/seattle_oo_id.html", oo_link=oo_link)
+    id_mapping = _get_oo_id_mapping()
+    if oo_id := id_mapping.get(record["badge"]):  # type: ignore
+        oo_link = OO_URL_TEMPLATE.format(id_=oo_id)
+        return render_template("extras/seattle_oo_id.j2", oo_link=oo_link)
     return ""
 
 
