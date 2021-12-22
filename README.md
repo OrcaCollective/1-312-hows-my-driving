@@ -9,15 +9,15 @@ Licenses are looked up in the dataset and if a vehicle is found, that data is di
 
 ## Development
 
-### If you just want to run the app
+We use the [`just` command runner](https://github.com/casey/just), you'll need to install it before running any steps below.
 
-Build the image with `docker build -t <tag> .`. Run it with `docker run -p 5000:5000 <tag>`.
+### Build and run the app
+
+Build the image with `just build` and run it using `just up`.
+The server will be available at port `3030`.
 
 ### If you want to make changes
 
-1. Install a python virtual environment: `python3 -m venv venv`
-2. Activate the virtual environment: `source venv/bin/activate`
-3. Install dependencies: `pip install -r requirements-dev.txt`
-4. Install the pre-commit hook: `pre-commit install`
-5. Run the app: `cd src; FLASK_DEBUG=1 flask run`
-6. Make changes and contribute 🙌
+The flask server will detect any changes made to the code and restart the application to pick up said changes.
+
+To run the static checks (`just lint`), you will first need to [install `pre-commit`](https://pre-commit.com/).

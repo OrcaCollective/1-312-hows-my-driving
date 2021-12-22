@@ -31,3 +31,7 @@ logs service="":
 # Run a command using the web image
 run +args:
 	{{ RUN }} {{ args }}
+
+# Run the static checks
+lint:
+    pre-commit run --all-files
