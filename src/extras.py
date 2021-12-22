@@ -58,7 +58,12 @@ def augment_with_salary(record: Record) -> str:
 def _get_oo_id_mapping() -> Mapping[str, str]:
     if OO_CACHE.currsize == 0:
         log.info("Refreshing OO ID cache")
-        response = requests.get(OO_ID_SOURCE_URL)
+        try:
+            response = requests.get(OO_ID_SOURCE_URL, timeout=60)
+            response.raise_for_status()
+        except Exception as err:
+            log.warning(f"OO ID URL {OO_ID_SOURCE_URL} failed with error: {err}")
+            return {}
         reader = csv.DictReader(io.StringIO(response.text, newline=""))
         for row in reader:
             OO_CACHE[row["badge number"]] = row["id"]
