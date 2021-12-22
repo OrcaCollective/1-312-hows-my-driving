@@ -16,6 +16,8 @@ We use the [`just` command runner](https://github.com/casey/just), you'll need t
 Build the image with `just build` and run it using `just up`.
 The server will be available at port `3030`.
 
+To run this image in production, use the `IS_PROD` variable for any actions, e.g. `IS_PROD=true just up`.
+
 ### If you want to make changes
 
 The flask server will detect any changes made to the code and restart the application to pick up said changes.
