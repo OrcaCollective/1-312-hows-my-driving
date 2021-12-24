@@ -4,8 +4,8 @@ on:
   release:
     types: [published]
   pull_request:
-#    branches:
-#      - ci/*
+    branches:
+      - ci/*
 
 env:
   image_name: orcacollective/1-312-hows-my-driving
