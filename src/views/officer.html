@@ -6,7 +6,7 @@
     <p><b>{{ field.Label }}:</b> {{ value if value }}</p>
     {% endif %}
 {% endfor %}
-{{ extras }}
+{{ extras | safe }}
 {% if historical_available %}
     <p>A historical view of this officer's records is <a href="/historical-officers/{{record.get('badge')}} ">available here</a>.</p>
 {% endif %}
