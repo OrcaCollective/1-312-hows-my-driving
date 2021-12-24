@@ -25,7 +25,7 @@ def license_lookup(license: str) -> str:
                 )
             else:
                 r = results[0]
-                html = render_template("license.j2", **r)
+                html = render_template("license.html", **r)
 
         except Exception as err:
             log.exception(err)

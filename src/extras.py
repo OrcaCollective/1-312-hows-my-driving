@@ -21,7 +21,7 @@ def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> st
     projected = Decimal(s["hourly_rate"]) * 40 * 50
     # Format with commas
     context = {**s, "projected": f"{projected:,}"}
-    return render_template("seattle_extras.j2", **context)
+    return render_template("seattle_extras.html", **context)
 
 
 def augment_with_salary(record: Record) -> str:
