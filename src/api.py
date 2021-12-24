@@ -127,7 +127,7 @@ FIELDS_NOT_TO_RENDER = {
 
 
 def render_historical_officers(
-    records: Optional[List[Record]], metadata: DatasetMetadata
+    records: Optional[List[Record]], metadata: DatasetMetadata, show_full_history: bool
 ) -> str:
     if records is None:
         return ""
@@ -142,4 +142,5 @@ def render_historical_officers(
             for field in metadata["fields"]
             if field["FieldName"] not in FIELDS_NOT_TO_RENDER
         ],
+        show_full_history=show_full_history,
     )

@@ -43,6 +43,7 @@ def name_lookup(
     entities: typing.List[api_types.Entity],
     strict_search: bool = None,
     historical: bool = False,
+    show_full_history: bool = False,
     **kwargs,
 ) -> typing.Tuple[str, bool]:
     if strict_search is None:
@@ -58,7 +59,7 @@ def name_lookup(
     try:
         records = api.get_results(metadata, strict_search, historical, **kwargs)
         html = (
-            api.render_historical_officers(records, metadata)
+            api.render_historical_officers(records, metadata, show_full_history)
             if historical
             else api.render_officers(records, metadata)
         )

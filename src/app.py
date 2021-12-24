@@ -106,13 +106,18 @@ def historical_page(badge):
     """Historical officer name lookup form render"""
     datasets = api.get_datasets()
     metadata = datasets.get("spd", "")
+    show_full_history = request.args.get("show_full_history", False) or False
     if not metadata:
         # This shouldn't happen, but return *something* if the dataset is borked.
         html = "<p><b>No data for dataset historical SPD</b></p>"
     else:
         # throw away the strict_search value as historical search is always strict
         html, _ = dataset.name_lookup(
-            metadata, entities=[], historical=True, badge=badge
+            metadata,
+            entities=[],
+            historical=True,
+            badge=badge,
+            show_full_history=show_full_history,
         )
 
     return render_template(
