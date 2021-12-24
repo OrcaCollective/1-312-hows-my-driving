@@ -61,7 +61,7 @@ def _get_oo_id_mapping() -> Mapping[str, str]:
         try:
             response = requests.get(OO_ID_SOURCE_URL, timeout=60)
             response.raise_for_status()
-        except Exception as err:
+        except requests.exceptions.RequestException as err:
             log.warning(f"OO ID URL {OO_ID_SOURCE_URL} failed with error: {err}")
             return {}
         reader = csv.DictReader(io.StringIO(response.text, newline=""))
