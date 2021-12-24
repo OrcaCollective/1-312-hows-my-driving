@@ -18,3 +18,10 @@ def diff_classname_filter(
         return "has_diff"
 
     return ""
+
+
+def diff_record_filter(current_record: dict, previous_record: dict) -> bool:
+    if not previous_record:
+        return False
+    # Override date keys so they're the same for all comparisons
+    return {**current_record, "date": True} == {**previous_record, "date": True}

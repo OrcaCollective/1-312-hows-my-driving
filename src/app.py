@@ -11,6 +11,8 @@ app = Flask(__name__, static_folder="public", template_folder="views")
 
 
 app.jinja_env.filters["diff_classname"] = filters.diff_classname_filter
+app.jinja_env.filters["diff_record"] = filters.diff_record_filter
+app.jinja_env.add_extension("jinja2.ext.loopcontrols")
 
 
 ################################################################################

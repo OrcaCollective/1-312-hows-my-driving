@@ -11,6 +11,10 @@
         {% for record in records %}
             {# records are ordered by date, starting with the present into the past, so the "previous" record will be the next item in the list of records #}
             {% set previous_record = loop.nextitem %}
+            {% if record | diff_record(previous_record) %}
+                {# Don't display records that are unchanged #}
+                {% continue %}
+            {% endif %}
             <tr>
                 {% for field in fields %}
                     <td class="{{ record | diff_classname(previous_record, field) }}">
