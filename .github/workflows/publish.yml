@@ -28,4 +28,4 @@ jobs:
           tags: |
             ghcr.io/orcacollective/1-312-hows-my-driving:${{ github.sha }}
             ghcr.io/orcacollective/1-312-hows-my-driving:${{ github.ref_name }}
-            ghcr.io/orcacollective/parler-data-searcher:latest
+            ghcr.io/orcacollective/1-312-hows-my-driving:latest
