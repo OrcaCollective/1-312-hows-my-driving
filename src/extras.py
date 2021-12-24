@@ -75,6 +75,7 @@ def augment_with_oo_link(record: Record) -> str:
     if oo_id := id_mapping.get(record["badge"]):  # type: ignore
         oo_link = OO_URL_TEMPLATE.format(id_=oo_id)
         return render_template("extras/seattle_oo_id.j2", oo_link=oo_link)
+
     return ""
 
 
