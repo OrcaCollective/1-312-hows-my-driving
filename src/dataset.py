@@ -38,6 +38,22 @@ def license_lookup(license: str) -> str:
         return ""
 
 
+def filter_records(
+    records: typing.List[api_types.Record],
+) -> typing.List[api_types.Record]:
+    filtered: typing.List[api_types.Record] = []
+    for idx, record in enumerate(records):
+        next_idx = idx + 1
+        if next_idx == len(records):
+            # Reached the end of the list
+            break
+        next_record = records[next_idx]
+        # Override date keys so they're the same for all comparisons
+        if {**record, "date": True} != {**next_record, "date": True}:  # type: ignore
+            filtered.append(record)
+    return filtered
+
+
 def name_lookup(
     metadata: api_types.DatasetMetadata,
     entities: typing.List[api_types.Entity],
@@ -58,8 +74,10 @@ def name_lookup(
 
     try:
         records = api.get_results(metadata, strict_search, historical, **kwargs)
+        if not show_full_history and historical:
+            records = filter_records(records or [])
         html = (
-            api.render_historical_officers(records, metadata, show_full_history)
+            api.render_historical_officers(records, metadata)
             if historical
             else api.render_officers(records, metadata)
         )
