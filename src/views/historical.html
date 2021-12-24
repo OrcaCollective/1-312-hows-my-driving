@@ -3,6 +3,17 @@
 {% block content %}
 <main>
 	<h2>Historical view for badge #{{ badge }}</h2>
+    {% set is_truncated_history = "" if show_full_history else "true" %}
+    <form method="get" action="{{ url_for(request.endpoint, badge=badge) }}" class="form_override">
+        <input type="hidden" name="show_full_history" value="{{ is_truncated_history }}">
+        <button type="submit">
+            {% if is_truncated_history %}
+                Show full history
+            {% else %}
+                Show only changed records
+            {% endif %}
+        </button>
+    </form>
 	{{ entity_html | safe }}
 </main>
 {% endblock %}

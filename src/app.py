@@ -125,6 +125,7 @@ def historical_page(badge):
         **HISTORICAL_CONTEXT,
         entity_html=html,
         badge=badge,
+        show_full_history=show_full_history,
     )
 
 
