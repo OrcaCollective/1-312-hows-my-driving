@@ -3,7 +3,12 @@ name: Publish Docker image
 on:
   release:
     types: [published]
+  pull_request:
+#    branches:
+#      - ci/*
 
+env:
+  image_name: orcacollective/1-312-hows-my-driving
 
 jobs:
   push_to_registry:
@@ -26,6 +31,6 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/orcacollective/1-312-hows-my-driving:${{ github.sha }}
-            ghcr.io/orcacollective/1-312-hows-my-driving:${{ github.ref_name }}
-            ghcr.io/orcacollective/1-312-hows-my-driving:latest
+            ghcr.io/${{ env.image_name }}:${{ github.sha }}
+            ghcr.io/${{ env.image_name }}:${{ github.ref_name }}
+            ghcr.io/${{ env.image_name }}:latest
