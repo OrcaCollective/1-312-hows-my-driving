@@ -5,7 +5,7 @@ on:
     types: [published]
   push:
     branches:
-      - ci/*
+      - ci-*
 
 env:
   image_name: orcacollective/1-312-hows-my-driving
