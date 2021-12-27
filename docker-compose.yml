@@ -3,7 +3,7 @@ version: "3"
 services:
     app:
         restart: always
-        build: .
+        image: ghcr.io/orcacollective/1-312-hows-my-driving:${DOCKER_TAG:-latest}
         environment:
             FLASK_APP: app
             FLASK_ENV: production

@@ -17,6 +17,8 @@ Build the image with `just build` and run it using `just up`.
 The server will be available at port `3030`.
 
 To run this image in production, use the `IS_PROD` variable for any actions, e.g. `IS_PROD=true just up`.
+By default, the production docker-compose file will pull the `latest` docker image.
+This can be overridden with the `DOCKER_TAG` environment variable.
 
 ### If you want to make changes
 
