@@ -107,7 +107,7 @@ def render_officers(records: Optional[List[Record]], metadata: DatasetMetadata) 
             extras = EXTRAS_MAPPING[metadata["id"]](record)
         htmls.append(
             render_template(
-                "officer.j2",
+                "officer.html",
                 record=record,
                 metadata=metadata,
                 extras=extras,
@@ -135,7 +135,7 @@ def render_historical_officers(
         return "<p><b>No historical record found for this badge</b></p>"
 
     return render_template(
-        "officer-table.j2",
+        "officer-table.html",
         records=records,
         fields=[
             field

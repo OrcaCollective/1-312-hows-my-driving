@@ -25,7 +25,7 @@ def license_lookup(license: str) -> str:
                 )
             else:
                 r = results[0]
-                html = render_template("license.j2", **r)
+                html = render_template("license.html", **r)
 
         except Exception as err:
             log.exception(err)
@@ -38,11 +38,28 @@ def license_lookup(license: str) -> str:
         return ""
 
 
+def filter_records(
+    records: typing.List[api_types.Record],
+) -> typing.List[api_types.Record]:
+    filtered: typing.List[api_types.Record] = []
+    for idx, record in enumerate(records):
+        next_idx = idx + 1
+        if next_idx == len(records):
+            # Reached the end of the list
+            break
+        next_record = records[next_idx]
+        # Override date keys so they're the same for all comparisons
+        if {**record, "date": True} != {**next_record, "date": True}:  # type: ignore
+            filtered.append(record)
+    return filtered
+
+
 def name_lookup(
     metadata: api_types.DatasetMetadata,
     entities: typing.List[api_types.Entity],
     strict_search: bool = None,
     historical: bool = False,
+    show_full_history: bool = False,
     **kwargs,
 ) -> typing.Tuple[str, bool]:
     if strict_search is None:
@@ -57,6 +74,8 @@ def name_lookup(
 
     try:
         records = api.get_results(metadata, strict_search, historical, **kwargs)
+        if not show_full_history and historical:
+            records = filter_records(records or [])
         html = (
             api.render_historical_officers(records, metadata)
             if historical
