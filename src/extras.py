@@ -40,7 +40,7 @@ def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> st
     projected = Decimal(s["hourly_rate"]) * 40 * 50
     # Format with commas
     context = {**s, "projected": f"{projected:,}"}
-    return render_template("extras/seattle_salary.html", **context)
+    return render_template("extras/seattle-salary.html", **context)
 
 
 def augment_with_salary(record: Record) -> str:
@@ -74,7 +74,7 @@ def augment_with_oo_link(record: Record) -> str:
     id_mapping = _get_oo_id_mapping()
     if oo_id := id_mapping.get(record["badge"]):  # type: ignore
         oo_link = OO_URL_TEMPLATE.format(id_=oo_id)
-        return render_template("extras/seattle_oo_id.j2", oo_link=oo_link)
+        return render_template("extras/seattle-oo-id.html", oo_link=oo_link)
 
     return ""
 
