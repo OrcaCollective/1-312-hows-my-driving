@@ -1,5 +1,6 @@
 import logging
 from typing import List, Mapping, Optional
+from os import environ
 
 import cachetools
 import requests
@@ -13,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 # Data API configuration
-DATA_API_HOST = "https://1312api.tech-bloc-sea.dev"
+DATA_API_HOST = environ.get("DATA_API_HOST")
 
 # Cache
 DatasetMapping = Mapping[str, DatasetMetadata]
