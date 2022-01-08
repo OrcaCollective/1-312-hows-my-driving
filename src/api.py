@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 # Data API configuration
-DATA_API_HOST = environ.get("DATA_API_HOST")
+DATA_API_HOST = environ.get("DATA_API_HOST", "")
 
 # Cache
 DatasetMapping = Mapping[str, DatasetMetadata]
