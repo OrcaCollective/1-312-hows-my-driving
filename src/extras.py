@@ -37,7 +37,13 @@ def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> st
     if not results:
         return ""
     s = results[0]
-    projected = Decimal(s["hourly_rate"]) * 40 * 50
+    hourly_rate = s["hourly_rate"]
+    # City of Seattle wage data formats rate as "$    <number>" for some
+    # horrible reason, so we clean this data a bit for decimal conversion.
+    if isinstance(hourly_rate, str):
+        hourly_rate = hourly_rate.replace("$", "").replace(" ", "")
+    s["hourly_rate"] = hourly_rate
+    projected = Decimal(hourly_rate) * 40 * 50
     # Format with commas
     context = {**s, "projected": f"{projected:,}"}
     return render_template("extras/seattle-salary.html", **context)
