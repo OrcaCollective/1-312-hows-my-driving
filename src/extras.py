@@ -41,8 +41,8 @@ def _augment_with_salary_cached(last: Optional[str], first: Optional[str]) -> st
     # City of Seattle wage data formats rate as "$    <number>" for some
     # horrible reason, so we clean this data a bit for decimal conversion.
     if isinstance(hourly_rate, str):
-        hourly_rate = hourly_rate.replace("$", "").replace(" ", "")
-    s["hourly_rate"] = hourly_rate
+        hourly_rate = hourly_rate.strip("$ ")
+        s["hourly_rate"] = hourly_rate
     projected = Decimal(hourly_rate) * 40 * 50
     # Format with commas
     context = {**s, "projected": f"{projected:,}"}
