@@ -8,4 +8,4 @@ types-cryptography==3.3.0
 types-enum34==0.1.5
 types-ipaddress==0.1.2
 types-pkg-resources==0.1.2
-types-requests==0.1.10
+types-requests==2.28.11.17
