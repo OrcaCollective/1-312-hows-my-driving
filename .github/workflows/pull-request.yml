@@ -28,7 +28,10 @@ jobs:
       - name: Start server
         run: just up
       - name: Check server
-        run: curl --fail -LI localhost:3030 -o /dev/null -w '%{http_code}\n'
+        run: |
+          # Wait for the server to be ready
+          sleep 5
+          curl --fail -LI localhost:3030 -o /dev/null -w '%{http_code}\n'
       - name: Stop server
         if: always()
         run: just down
