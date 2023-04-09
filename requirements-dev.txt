@@ -5,7 +5,7 @@ black==21.6b0
 mypy==0.902
 types-cachetools==0.1.6
 types-cryptography==3.3.0
-types-enum34==0.1.5
+types-enum34==1.1.8
 types-ipaddress==1.0.8
 types-pkg-resources==0.1.2
 types-requests==2.28.11.17
