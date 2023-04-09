@@ -3,4 +3,4 @@ cachetools==4.2.2
 gunicorn==20.1.0
 requests==2.25.1
 sodapy==2.1.0
-typing-extensions==3.10.0.0
+typing-extensions==4.5.0
