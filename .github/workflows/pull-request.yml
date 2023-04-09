@@ -16,3 +16,25 @@ jobs:
         run: pip install -r requirements-dev.txt
       - name: Run pre-commit checks
         run: pre-commit run --all-files
+
+  smoke-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: extractions/setup-just@v1
+      - name: Build image
+        run: just build
+      - name: Start server
+        run: just up
+      - name: Check server
+        run: |
+          # Wait for the server to be ready
+          sleep 5
+          curl --fail -LI localhost:3030 -o /dev/null -w '%{http_code}\n'
+      - name: Output logs
+        if: failure()
+        run: just logs
+      - name: Stop server
+        if: always()
+        run: just down
