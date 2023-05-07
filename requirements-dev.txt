@@ -3,7 +3,7 @@ pre-commit==3.3.1
 flake8==3.9.2
 black==21.6b0
 mypy==1.2.0
-types-cachetools==0.1.6
+types-cachetools==5.3.0.5
 types-cryptography==3.3.23.2
 types-enum34==1.1.8
 types-ipaddress==1.0.8
