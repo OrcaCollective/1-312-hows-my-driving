@@ -1,5 +1,5 @@
 -r requirements.txt
-pre-commit==3.3.2
+pre-commit==3.3.3
 flake8==6.0.0
 black==21.6b0
 mypy==1.2.0
